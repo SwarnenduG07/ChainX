@@ -1,6 +1,8 @@
 
+import { Feature } from "@/components/Features";
 import Hero from "@/components/Hero";
 import { HeroVideo } from "@/components/HeroVideo";
+import { LandingFetures } from "@/components/LandingFetures";
 import { NavBar } from "@/components/NavBar";
 
 export default function Home() {
@@ -9,6 +11,7 @@ export default function Home() {
        <NavBar/> 
        <Hero />
        <HeroVideo />
+       <LandingFetures />
     </div>
   );
 }

@@ -61,6 +61,9 @@ const config: Config = {
 		backgroundImage: {
             // 'gradient-radial': 'radial-gradient(circle, rgba(89,0,228,1), rgba(20,0,50,1))'
 		},
+		boxShadow: {
+			'text-depth' : '2px 2px 4px rgba(0,0,0,0.3)',
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
