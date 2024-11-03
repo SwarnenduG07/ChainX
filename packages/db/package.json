@@ -1,0 +1,22 @@
+{
+  "name": "@repo/db",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "version": "1.0.0",
+  "description": "The main db",
+  "main": "index.js",
+  "scripts": {
+    "db:migrate": "pnpm dlx prisma migrate dev && pnpm dlx prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "prisma": "5.21.1"
+  },
+  "dependencies": {
+    "@prisma/client": "5.21.1"
+  }
+}
