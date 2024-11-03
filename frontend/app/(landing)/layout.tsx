@@ -2,7 +2,7 @@
 const LandingLayout = ({children}: {children: React.ReactNode}) => {
     return (
       <main >
-          <div className="h-screen bg-black ">
+          <div className=" bg-black ">
               {children} 
           </div>
       </main>
