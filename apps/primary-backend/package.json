@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/db": "workspace:*",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "jsonwebtoken": "^9.0.2",

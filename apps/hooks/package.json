@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1",
-    "@repo/db": "workspace:*"
+    "@repo/db": "workspace:*",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
   }
 }
