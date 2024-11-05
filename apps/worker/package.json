@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/db": "workspace:*",
     "kafkajs": "^2.2.4",
-    "@repo/db": "workspace:*"
+    "nodemailer": "^6.9.16"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.16"
   }
 }

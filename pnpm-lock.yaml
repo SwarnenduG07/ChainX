@@ -143,6 +143,13 @@ importers:
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4
+      nodemailer:
+        specifier: ^6.9.16
+        version: 6.9.16
+    devDependencies:
+      '@types/nodemailer':
+        specifier: ^6.4.16
+        version: 6.4.16
 
   packages/config-eslint:
     devDependencies:
@@ -540,6 +547,9 @@ packages:
 
   '@types/node@20.11.24':
     resolution: {integrity: sha512-Kza43ewS3xoLgCEpQrsT+xRo/EJej1y0kVYGiLFE1NEODXGzTfwiC6tXTLMQskn1X4/Rjlh0MQUvx9W+L9long==}
+
+  '@types/nodemailer@6.4.16':
+    resolution: {integrity: sha512-uz6hN6Pp0upXMcilM61CoKyjT7sskBoOWpptkjjJp8jIMlTdc3xG01U7proKkXzruMS4hS0zqtHNkNPFB20rKQ==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -3259,6 +3269,10 @@ snapshots:
   '@types/node@20.11.24':
     dependencies:
       undici-types: 5.26.5
+
+  '@types/nodemailer@6.4.16':
+    dependencies:
+      '@types/node': 20.11.24
 
   '@types/normalize-package-data@2.4.4': {}
 
