@@ -12,6 +12,16 @@ const router = Router();
 
 const generateToken = () => crypto.randomBytes(32).toString("hex");
 
+// const transporter = nodemailer.createTransport({
+//     host: process.env.SMTP_ENDPOINT,
+//     port: 587,
+//     secure: false, // upgrade later with STARTTLS
+//     auth: {
+//       user: process.env.SMTP_USERNAME,
+//       pass: process.env.SMTP_PASSWORD,
+//     },
+// })
+
 router.post("/signup", async (req: Request, res: Response) => {
    const body = req.body;
    const parsedData = SignupSchema.safeParse(body);
