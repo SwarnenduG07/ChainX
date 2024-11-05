@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client'
+import { JsonObject } from '@prisma/client/runtime/library';
+
+export type { JsonObject}
 
 const prismaClientSingleton = () => {
   return new PrismaClient()
