@@ -1,15 +1,15 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 
-export const NavBar = () => {
+export function NavBar():JSX.Element {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-        setIsLoggedIn(!!token);
+        setIsLoggedIn(Boolean(token));
     }, []);
 
     const handleSignout = () => {
@@ -27,8 +27,7 @@ export const NavBar = () => {
             
             <div className='flex space-x-3 mr-10'>
                 {!isLoggedIn ? (
-                    <>
-                     <div className='flex items-center space-x-4 text-neutral-100'>
+                    <div className='flex items-center space-x-4 text-neutral-100'>
                         
                         <div>
                             <span className=' hover:text-purple-500'>Feature</span>
@@ -51,10 +50,9 @@ export const NavBar = () => {
                             }}>Signup</Button>
                         </div>
                     </div>
-                    </>
                 ) : (
                     <div>
-                        <Button className='rounded-full bg-orange-400 hover:bg-red-800 hover:text-white' variant="ghost" onClick={handleSignout}>
+                        <Button className='rounded-full bg-orange-400 hover:bg-red-800 hover:text-white' onClick={handleSignout} variant="ghost">
                             Logout
                         </Button>
                     </div>
@@ -62,4 +60,4 @@ export const NavBar = () => {
             </div>
         </nav>
     );
-};
+}

@@ -1,10 +1,10 @@
 "use client"
 import React from 'react'
-import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
-import { Feature } from './Features'
+import { Button } from './ui/button'
+import { Feature } from './features'
 
-const Hero = () => {
+function Hero():JSX.Element {
     const router  = useRouter();
   return (
     <div className=''>
@@ -28,16 +28,16 @@ const Hero = () => {
             }}>
                 Get started
             </Button>
-            <Button className='rounded-full w-52 py-6 text-lg' variant="outline" onClick={() => {
+            <Button className='rounded-full w-52 py-6 text-lg' onClick={() => {
                 router.push("/signup")
-            }}>
+            }} variant="outline">
                 Contact Sales
             </Button>
         </div>   
         <div className="flex justify-center pt-4 text-neutral-50">
-            <Feature title={"Free Forever"} subtitle={"for core features"} />
-            <Feature title={"More apps"} subtitle={"than any other platforms"} />
-            <Feature title={"Cutting Edge"} subtitle={"AI Features"} />
+            <Feature subtitle="for core features" title="Free Forever" />
+            <Feature subtitle="than any other platforms" title="More apps" />
+            <Feature subtitle="AI Features" title="Cutting Edge" />
         </div>
     </div>
   )
