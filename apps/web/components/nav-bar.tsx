@@ -12,7 +12,7 @@ export function NavBar():JSX.Element {
         setIsLoggedIn(Boolean(token));
     }, []);
 
-    const handleSignout = () => {
+    const handleSignout = (): void => {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
         setIsLoggedIn(false);
