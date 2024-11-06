@@ -7,7 +7,7 @@ export function LandingFetures():JSX.Element {
           Build powerful workflows incredibly fast
         </h1>
           <h1 className='text-neutral-50 text-lg items-center max-w-3xl pt-8 '>
-             Whether you &aspos; re a team of one or a thousand, Zapier puts the power of automation in your hands—no coding required. Take your workflows to the next level with our suite of automation tools.
+             Whether you are a team of one or a thousand, Zapier puts the power of automation in your hands—no coding required. Take your workflows to the next level with our suite of automation tools.
           </h1>
     </div>
   )

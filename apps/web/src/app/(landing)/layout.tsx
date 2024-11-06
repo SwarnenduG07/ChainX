@@ -1,5 +1,5 @@
 
-function LandingLayout({children}: {children: React.ReactNode}) {
+function LandingLayout({children}: {children: React.ReactNode}):JSX.Element {
     return (
       <main >
           <div className=" bg-black ">
