@@ -1,11 +1,11 @@
-export default function LandingLayout({
-    children,
-  }: {
-    children: React.ReactNode;
-  }): JSX.Element {
+
+const LandingLayout = ({children}: {children: React.ReactNode}) => {
     return (
-      <html lang="en">
-        <body className=''>{children}</body>
-      </html>
-    );
-  }
+      <main >
+          <div className=" bg-black ">
+              {children} 
+          </div>
+      </main>
+    )
+}
+export default LandingLayout
