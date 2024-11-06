@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@repo/db": "workspace:*",
+    "@solana/web3.js": "^1.95.4",
+    "bs58": "^6.0.0",
     "kafkajs": "^2.2.4",
     "nodemailer": "^6.9.16"
   },
