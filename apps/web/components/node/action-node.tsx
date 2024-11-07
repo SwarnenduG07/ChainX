@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Handle, Position } from "reactflow";
 import { Button } from "@/components/ui/button";
-import { useAvailableActionsAndTriggers } from "@/src/hooks/useaction-trigger";
+import { useAvailableActionsAndTriggers } from "@/hooks/useaction-trigger";
 import { ZapCell } from "../zapcell";
 import { Input } from "../input";
 

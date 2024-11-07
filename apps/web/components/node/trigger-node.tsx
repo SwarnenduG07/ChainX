@@ -1,4 +1,4 @@
-import { useAvailableActionsAndTriggers } from "@/src/hooks/useaction-trigger";
+import { useAvailableActionsAndTriggers } from "@/hooks/useaction-trigger";
 import React, { useState } from "react";
 import { Handle, Position } from "reactflow"; 
 
