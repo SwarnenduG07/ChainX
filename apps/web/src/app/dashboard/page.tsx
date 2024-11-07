@@ -5,7 +5,7 @@ import React from 'react'
 import { HOOKS_URL } from '../config';
 import { NavBar } from '@/components/nav-bar';
 import { Button } from '@/components/ui/button';
-import { useZaps, Zap } from '../hooks/userzap';
+import { useZaps, Zap } from '../../hooks/userzap';
 
 
 
