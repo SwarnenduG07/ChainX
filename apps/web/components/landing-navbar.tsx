@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 
-export function NavBar():JSX.Element {
+export function LandingNavBar():JSX.Element {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 

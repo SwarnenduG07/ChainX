@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { HOOKS_URL } from '../config';
-import { NavBar } from '@/components/nav-bar';
 import { Button } from '@/components/ui/button';
 import { useZaps, Zap } from '../../../hooks/userzap';
+import Navbar from '@/components/navbar';
 
 
 
@@ -14,7 +14,7 @@ export default function Dashboard() {
   const { loading, zaps} = useZaps();
   return (
     <div>
-        <NavBar />
+        <Navbar />
         <div className='pt-8 flex justify-center'>
           <div className='max-w-screen-lg w-full'>
            <div className='flex justify-between pr-8'>

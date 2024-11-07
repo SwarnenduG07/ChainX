@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { NavBar } from "@/components/nav-bar";
+import { LandingNavBar } from "@/components/landing-navbar";
 import { CheckFeature } from "@/components/checkfeature";
 
 interface SigninResponse {
@@ -47,7 +47,7 @@ export default function SigninPage() {
 
   return (
     <div className="flex flex-col justify-between">
-      <NavBar />
+      <LandingNavBar />
       <div className="flex mr">
         <div className="flex pt-20 max-w-4xl">
           <div className="flex-1 pt-20 px-4">

@@ -1,7 +1,7 @@
 import Hero from "@/components/hero";
 import { HeroVideo } from "@/components/hero-video";
 import { LandingFetures } from "@/components/landing-fetures";
-import { NavBar } from "@/components/nav-bar";
+import { NavBar } from "@/components/landing-navbar";
 
 
 

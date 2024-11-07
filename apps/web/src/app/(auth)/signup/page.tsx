@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { NavBar } from "@/components/nav-bar";
+import { LandingNavBar } from "@/components/landing-navbar";
 import { CheckFeature } from "@/components/checkfeature";
 import { BACKEND_URL } from "../../config";
 
@@ -31,7 +31,7 @@ export default function Signup() {
 
   return (
     <div>
-      <NavBar />
+      <LandingNavBar />
       <div className="flex justify-between">
         <div className="flex pt-20 max-w-4xl">
           <div className="flex-1 pt-20 px-4">
