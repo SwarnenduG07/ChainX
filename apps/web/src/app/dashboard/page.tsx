@@ -1,14 +1,13 @@
 "use client";
 
+import { NavBar } from '@/components/NavBar';
 import { Button } from '@/components/ui/button';
+import { useZaps, Zap } from '@/hooks/userZap';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { HOOKS_URL } from '../config';
-
-import Image from 'next/image';
-import Navbar from '@/components/navbar';
-import { useZaps, Zap } from '@/hooks/userzap';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Image from 'next/image';
 
 export default function Dashboard() {
   const routet = useRouter();
@@ -16,7 +15,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Navbar />
+      <NavBar />
       <div className='pt-8 flex justify-center'>
         <div className='max-w-screen-lg w-full'>
           <div className='flex justify-between pr-8'>
