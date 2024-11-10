@@ -1,5 +1,5 @@
 import { Kafka } from "kafkajs";
-import { dbClient } from "./db/db";
+import { dbClient } from "./db/db.js";
 const TOPIC_NAME = "zap-events";
 
 const kafka = new Kafka({

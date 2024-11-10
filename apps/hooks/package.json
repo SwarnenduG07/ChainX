@@ -1,8 +1,8 @@
 {
   "name": "hooks",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "dev": "tsc -b && node dist/index.js"
   },
@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/db": "workspace:*",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "@repo/db": "workspace:*"
   },
   "devDependencies": {
     "@types/express": "^5.0.0"

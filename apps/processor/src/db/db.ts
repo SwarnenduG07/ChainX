@@ -1,3 +1,3 @@
-import prismaClient from "@repo/db/src/index";
+import prismaClient from "@repo/db";
 
 export const dbClient = prismaClient;

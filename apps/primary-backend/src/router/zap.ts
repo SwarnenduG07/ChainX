@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware";
-import { ZapSchema } from "../types/types";
-import { dbClient } from "../db/db";
+import { authMiddleware } from "../middleware.js";
+import { ZapSchema } from "../types/types.js";
+import { dbClient } from "../db/db.js";
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.post("/", authMiddleware,  async (req, res) => {
             message: "Incorrect Inputs"
         });
       }
-      const zapId = await dbClient.$transaction(async (tx) => {
+      const zapId = await dbClient.$transaction(async (tx: any) => {
         try {
             const zap = await tx.zap.create({
                 data: {

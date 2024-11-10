@@ -1,7 +1,7 @@
 
 import { Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, PublicKey, sendAndConfirmTransaction, Connection } from "@solana/web3.js";
 import base58 from "bs58";
-import { dbClient } from "./db/db";
+import { dbClient } from "./db/db.js";
 
 
 const connection = new Connection("https://api.mainnet-beta.solana.com", "finalized");

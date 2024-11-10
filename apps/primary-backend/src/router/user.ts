@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
-import { SigninSchema, SignupSchema } from "../types/types";
-import { dbClient } from "../db/db";
+import { SigninSchema, SignupSchema } from "../types/types.js";
+import { dbClient } from "../db/db.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
-import { authMiddleware } from "../middleware";
+import { authMiddleware } from "../middleware.js";
 dotenv.config();
 
 const router = Router();

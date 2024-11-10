@@ -1,9 +1,9 @@
 import { Kafka } from "kafkajs";
-import { dbClient } from "./db/db";
-import { Parse } from "./parser";
-import { JsonObject } from "@repo/db/src";
-import { sendEmail } from "./email";
-import { sendSol } from "./solana";
+import { dbClient } from "./db/db.js";
+import { Parse } from "./parser.js";
+import { JsonObject } from "@repo/db";
+import { sendEmail } from "./email.js";
+import { sendSol } from "./solana.js";
 import JSONTransport from "nodemailer/lib/json-transport";
 
 const TOPIC_NAME = "zap-events";
