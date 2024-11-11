@@ -1,8 +1,7 @@
 "use client"
-import React from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from './ui/button'
 import { Feature } from './features'
+import { useRouter } from 'next/navigation'
 
 function Hero():JSX.Element {
     const router  = useRouter();
