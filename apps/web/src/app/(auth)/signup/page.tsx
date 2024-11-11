@@ -23,7 +23,7 @@ export default function Signup() {
         password,
         name,
       });
-      router.push("/signin");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Signup failed", error);
     }

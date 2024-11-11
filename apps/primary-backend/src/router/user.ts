@@ -62,7 +62,7 @@ router.post("/signup", async (req: Request, res: Response) => {
       subject: "Veryfy your email",
       html: `<p>Place verify your email by clicking the link below:</p> <a href="${verificationUrl}"> Verify Email</a>`
   }
-  return res.status(401).json({
+  return res.status(200).json({
      message: "Plese veryfi your account by checking your email"
   })
 });
