@@ -1,13 +1,12 @@
 "use client";
 
-import { NavBar } from '@/components/NavBar';
 import { Button } from '@/components/ui/button';
-import { useZaps, Zap } from '@/hooks/userZap';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { HOOKS_URL } from '../config';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Image from 'next/image';
+import { useZaps, Zap } from '@/hooks/userZap';
 
 export default function Dashboard() {
   const routet = useRouter();
@@ -15,7 +14,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className='pt-8 flex justify-center'>
         <div className='max-w-screen-lg w-full'>
           <div className='flex justify-between pr-8'>
@@ -54,7 +53,7 @@ function ZapTable({ zaps }: { zaps: Zap[] }) {
                   {z.trigger?.type?.image && (
                     <img src={z.trigger.type.image} alt="Webhook" width={30} height={30} />
                   )}
-                  {z.actions.map((action, idx) => (
+                  {z.actions.map((action : any, idx : any) => (
                     <img key={idx} src={action.type.image} alt="Action" width={30} height={30} />
                   ))}
                 </div>
