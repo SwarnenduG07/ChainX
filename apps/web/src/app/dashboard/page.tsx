@@ -33,7 +33,7 @@ function ZapTable({ zaps }: { zaps: Zap[] }) {
   const router = useRouter();
 
   return (
-    <div className="p-8 max-w-screen-lg w-full">
+    <div className="p-8 ">
       <Table>
         <TableHeader>
           <TableRow>

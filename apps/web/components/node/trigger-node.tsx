@@ -20,7 +20,7 @@ const TriggerNode = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className="bg-[#2d1f00] border border-dotted border-[#e6b800] rounded-lg p-4 shadow-lg text-white w-80 relative hover:border-emerald-600 hover:border-spacing-7">
+    <div className="bg-[#2d1f00] border border-dotted border-[#e6b800] rounded-lg p-4 shadow-lg text-white w-80 relative hover:border-emerald-600 ">
       {/* Output Handle */}
       <Handle
         type="source"
