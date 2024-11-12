@@ -5,50 +5,10 @@ import { useAvailableActionsAndTriggers } from "@/hooks/useaction-trigger";
 import { ZapCell } from "../zapcell";
 import { Input } from "../input";
 
-interface ActionMetadata {
-  email?: {
-    email: string;
-    body: string;
-  };
-  solana?: {
-    amount: string;
-    address: string;
-  };
-}
-
-interface Action {
-  index: number;
-  availableActionId: string;
-  availableActionName: string;
-  metadata?: ActionMetadata;
-}
-
-interface AvailableAction {
-  id: string;
-  name: string;
-  image: string;
-}
-
-interface ActionNodeProps {
-  data: {
-    selectedActions: Action[];
-    setSelectedActions: React.Dispatch<React.SetStateAction<Action[]>>;
-  };
-}
-
-interface ModalProps {
-  index: number;
-  onSelect: (props: null | { name: string; id: string; metadata?: ActionMetadata }) => void;
-  availableItems: AvailableAction[];
-}
-
-interface MetadataSelectorProps {
-  setMetadata: (params: any) => void;
-}
-
-const ActionNode: React.FC<ActionNodeProps> = ({ data }) => {
+const ActionNode = ({ data }: { data: any }) => {
   const { availableActions } = useAvailableActionsAndTriggers();
-  const { selectedActions, setSelectedActions } = data;
+  const {  selectedActions ,setSelectedActions } = data;
+
   const [selectedModelIndex, setSelectedModalIndex] = useState<number | null>(null);
 
   return (
@@ -63,7 +23,7 @@ const ActionNode: React.FC<ActionNodeProps> = ({ data }) => {
       <div className="flex items-center space-x-2 mb-2">
         <span className="flex justify-center items-center w-6 h-6 rounded-full bg-green-500">⚙️</span>
         <div className="w-full pt-2 pb-2">
-          {selectedActions.map((action) => (
+          {selectedActions.map((action: any) => (
             <div key={action.index} className="pt-2 flex justify-center">
               <ZapCell
                 onClick={() => setSelectedModalIndex(action.index)}
@@ -73,40 +33,39 @@ const ActionNode: React.FC<ActionNodeProps> = ({ data }) => {
             </div>
           ))}
         </div>
-        <Button
-          variant="secondary"
-          className="bg-gray-700 hover:bg-gray-600"
+        <button
+          className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-3 py-1 rounded-md"
           onClick={() => setSelectedModalIndex(selectedActions.length + 1)}
         >
           Select Action
-        </Button>
+        </button>
       </div>
+
+
 
       <p className="text-sm">
         <strong>2.</strong> Choose the action to be performed.
       </p>
 
       {selectedModelIndex !== null && (
-        <ActionModal
+        <Modal
           availableItems={availableActions.map(action => ({
             id: action.id.toString(),
             name: action.name,
             image: action.image
           }))}
-          onSelect={(props) => {
-            if (!props) {
+          onSelect={(props: null | { name: string; id: string; metadata: any }) => {
+            if (props === null) {
               setSelectedModalIndex(null);
               return;
             }
-            
-            const newAction: Action = {
+            const newAction = {
               index: selectedModelIndex,
               availableActionId: props.id,
               availableActionName: props.name,
               metadata: props.metadata,
             };
-            
-            setSelectedActions(prevActions => {
+            setSelectedActions((prevActions: any) => {
               const newActions = [...prevActions];
               newActions[selectedModelIndex - 1] = newAction;
               return newActions;
@@ -120,137 +79,100 @@ const ActionNode: React.FC<ActionNodeProps> = ({ data }) => {
   );
 };
 
-const ActionModal: React.FC<ModalProps> = ({ index, onSelect, availableItems }) => {
-  const [step, setStep] = useState(0);
-  const [selectedAction, setSelectedAction] = useState<{
-    id: string;
-    name: string;
-  }>();
+function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (props: null | { name: string; id: string; metadata: any; }) => void, availableItems: {id: string, name: string, image: string;}[] }) {
+    const [step, setStep] = useState(0);
+    const [selectedAction, setSelectedAction] = useState<{
+        id: string;
+        name: string;
+    }>();
 
-  const handleClose = () => onSelect(null);
+    return <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-slate-100 bg-opacity-70 flex">
+        <div className="relative p-4 w-full max-w-2xl max-h-full">
+            <div className="relative bg-white rounded-lg shadow ">
+                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
+                    <div className="text-xl">
+                        Select {index === 1 ? "Trigger" : "Action"}
+                    </div>
+                    <button onClick={() => {
+                        onSelect(null);
+                    }} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="default-modal">
+                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span className="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <div className="p-4 md:p-5 space-y-4">
+                    {step === 1 && selectedAction?.id === "email" && <EmailSelector setMetadata={(metadata) => {
+                        onSelect({
+                            ...selectedAction,
+                            metadata
+                        })
+                    }} />}
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-100 bg-opacity-70">
-      <div className="relative w-full max-w-2xl p-4">
-        <div className="relative bg-white rounded-lg shadow">
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-            <h2 className="text-xl font-semibold">
-              Select {index === 1 ? "Trigger" : "Action"}
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClose}
-              className="text-gray-400 hover:bg-gray-200 hover:text-gray-900"
-            >
-              <span className="sr-only">Close modal</span>
-              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-              </svg>
-            </Button>
-          </div>
-          
-          <div className="p-4 md:p-5 space-y-4">
-            {step === 1 && selectedAction?.id === "email" && (
-              <EmailSelector 
-                setMetadata={(metadata) => {
-                  onSelect({
-                    ...selectedAction,
-                    metadata: { email: metadata }
-                  });
-                }} 
-              />
-            )}
+                    {(step === 1 && selectedAction?.id === "send-sol") && <SolanaSelector setMetadata={(metadata) => {
+                        onSelect({
+                            ...selectedAction,
+                            metadata
+                        })
+                    }} />}
 
-            {step === 1 && selectedAction?.id === "send-sol" && (
-              <SolanaSelector 
-                setMetadata={(metadata) => {
-                  onSelect({
-                    ...selectedAction,
-                    metadata: { solana: metadata }
-                  });
-                }} 
-              />
-            )}
-
-            {step === 0 && (
-              <div className="space-y-2">
-                {availableItems.map(({ id, name, image }) => (
-                  <div
-                    key={id}
-                    onClick={() => {
-                      setStep(1);
-                      setSelectedAction({ id, name });
-                    }}
-                    className="flex items-center p-4 border border-red-800 rounded-lg cursor-pointer hover:bg-slate-100"
-                  >
-                    <img src={image} alt={name} width={35} className="rounded-full" />
-                    <span className="ml-3 text-black">{name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                    {step === 0 && <div>{availableItems.map(({id, name, image}) => {
+                            return <div onClick={() => {
+                                setStep(s => s + 1);
+                                setSelectedAction({
+                                    id,
+                                    name
+                                })
+                            }} className="flex border p-4 m-2 cursor-pointer hover:bg-slate-100 border-gray-500 rounded-3xl">
+                                <img src={image} width={35} className="rounded-full" /> <div className="flex flex-col justify-center text-black ml-1.5"> {name} </div>
+                            </div>
+                        })}</div>}                    
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  );
-};
 
-const EmailSelector: React.FC<MetadataSelectorProps> = ({ setMetadata }) => {
-  const [email, setEmail] = useState("");
-  const [body, setBody] = useState("");
+}
 
-  return (
-    <div className="space-y-4">
-      <Input
-        label="To"
-        type="email"
-        placeholder="Enter email address"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        label="Body"
-        type="text"
-        placeholder="Enter email body"
-        onChange={(e) => setBody(e.target.value)}
-      />
-      <Button 
-        onClick={() => setMetadata({ email, body })}
-        className="w-full"
-      >
-        Submit
-      </Button>
+function EmailSelector({setMetadata}: {
+    setMetadata: (params: any) => void;
+}) {
+    const [email, setEmail] = useState("");
+    const [body, setBody] = useState("");
+
+    return <div>
+        <Input label={"To"} type={"text"} placeholder="To" onChange={(e) => setEmail(e.target.value)}></Input>
+        <Input label={"Body"} type={"text"} placeholder="Body" onChange={(e) => setBody(e.target.value)}></Input>
+        <div className="pt-2">
+            <Button onClick={() => {
+                setMetadata({
+                    email,
+                    body
+                })
+            }}>Submit</Button>
+        </div>
     </div>
-  );
-};
+}
 
-const SolanaSelector: React.FC<MetadataSelectorProps> = ({ setMetadata }) => {
-  const [amount, setAmount] = useState("");
-  const [address, setAddress] = useState("");
+function SolanaSelector({setMetadata}: {
+    setMetadata: (params: any) => void;
+}) {
+    const [amount, setAmount] = useState("");
+    const [address, setAddress] = useState("");    
 
-  return (
-    <div className="space-y-4">
-      <Input
-        label="To"
-        type="text"
-        placeholder="Enter Solana address"
-        onChange={(e) => setAddress(e.target.value)}
-      />
-      <Input
-        label="Amount"
-        type="text"
-        placeholder="Enter amount"
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <Button 
-        onClick={() => setMetadata({ amount, address })}
-        className="w-full"
-      >
-        Submit
-      </Button>
+    return <div>
+        <Input label={"To"} type={"text"} placeholder="To" onChange={(e) => setAddress(e.target.value)}></Input>
+        <Input label={"Amount"} type={"text"} placeholder="Amount" onChange={(e) => setAmount(e.target.value)}></Input>
+        <div className="pt-4">
+        <Button onClick={() => {
+            setMetadata({
+                amount,
+                address
+            })
+        }}>Submit</Button>
+        </div>
     </div>
-  );
-};
+}
 
 export default ActionNode;
