@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { BACKEND_URL } from "../../config";
 import { LandingNavBar } from "@/components/landing-navbar";
 import { CheckFeature } from "@/components/checkfeature";
-import { BACKEND_URL } from "../../config";
-
 
 export default function Signup() {
   const router = useRouter();
@@ -23,7 +22,7 @@ export default function Signup() {
         password,
         name,
       });
-      router.push("/dashboard");
+      router.push("/signin");
     } catch (error) {
       console.error("Signup failed", error);
     }

@@ -1,16 +1,16 @@
-import { Router, Request, Response } from "express";
-import { SigninSchema, SignupSchema } from "../types/types.js";
-import { dbClient } from "../db/db.js";
-import crypto from "crypto";
-import bcrypt from "bcrypt";
+import { Router } from "express";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+import crypto from "crypto";
+import bcrypt from 'bcrypt';
+import { JWT_SECRET } from "../config.js";
 import { authMiddleware } from "../middleware.js";
-dotenv.config();
+import { SignupSchema, SigninSchema } from "../types/types.js";
+import { dbClient } from "../db/db.js";
 
+
+const generateToken = () => crypto.randomBytes(20).toString("hex");
 const router = Router();
 
-const generateToken = () => crypto.randomBytes(32).toString("hex");
 
 // const transporter = nodemailer.createTransport({
 //     host: process.env.SMTP_ENDPOINT,
@@ -22,216 +22,246 @@ const generateToken = () => crypto.randomBytes(32).toString("hex");
 //     },
 // })
 
-router.post("/signup", async (req: Request, res: Response) => {
-   const body = req.body;
-   const parsedData = SignupSchema.safeParse(body);
+router.post("/signup", async (req, res) => {
+    const body = req.body;
+    const parsedData = SignupSchema.safeParse(body);
 
-   if (!parsedData.success) {
-      console.log(parsedData.error);
-      return res.status(411).json({
-         message: "Invalid input",
-      });
-   }
-   const userExists = await dbClient.user.findFirst({
-      where: {
-         email: parsedData.data.username,
-      }
-   });
-   if(userExists) {
-      return res.status(403).json({
-         message: "User Already Exists"
-      })
-   };
-   const token = generateToken();
-   const expiration = new Date(Date.now() + 24 * 60 *  60 *1000);
-   const hashedpassword = await bcrypt.hash(parsedData.data.password,  10);
-   const user = await dbClient.user.create({
-      data: {
-         email: parsedData.data.username,
-         password: hashedpassword,
-         name: parsedData.data.name,
-         verificationToken: token,
-         verificationTokenExpiry: expiration,
-         isVerified: false,
-      }
-   });
-   const verificationUrl =  `idonthavedomail.com/verifyemail?token=${token}`;
-      const mailoptions = {
-      from: 'noreply@yourdomail.com',
-      to: user.email,
-      subject: "Veryfy your email",
-      html: `<p>Place verify your email by clicking the link below:</p> <a href="${verificationUrl}"> Verify Email</a>`
-  }
-  return res.status(200).json({
-     message: "Plese veryfi your account by checking your email"
-  })
-});
+    if (!parsedData.success) {
+        console.log(parsedData.error);
+        return res.status(411).json({
+            message: "Incorrect inputs"
+        })
+    }
+     const start = Date.now();
+    const userExists = await dbClient.user.findFirst({
+        where: {
+            email: parsedData.data.username
+        }
+    });
+   const end = Date.now();
+   console.log(`Db time : ${end - start}ms`);
+   
+    if (userExists) {
+        return res.status(403).json({
+            message: "User already exists"
+        })
+    }
+    const token = generateToken();
+    const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000);
+ const startTime = Date.now();
+  const hashedpassword = await bcrypt.hash(parsedData.data.password, 10);
+  const endTime = Date.now();
+  console.log(`Total time is: ${endTime - startTime}ms`);
+  
+     const user = await dbClient.user.create({
+        data: {
+            email: parsedData.data.username,
+            password: hashedpassword,
+            name: parsedData.data.name,
+            verificationToken: token,
+            verificationTokenExpiry: expiration,
+            isVerified: false,
+        }
+    })
+    console.log("after hash");
+    
 
-router.get("/verifyemail", async (req: Request,res: Response) => {
-   const token = req.query.token;
-   const tokenString = Array.isArray(token) ? token : [token];
-   if(typeof tokenString !== 'string' ) {
-      return res.status(400).json({
-         message: "Invalid token formate"
-      });
-   }
-   const user = await dbClient.user.findFirst({
-      where: {
-         verificationToken: tokenString,
-         verificationTokenExpiry: {
-            gte: new Date()
-         }
-      }
-   });
-   if (!user) {
-      return res.json({
-         message: "invalid or Expired token"
-      })
-   };
-   await dbClient.user.update({
-      where: {
-         id: user.id,
-      }   ,
-      data: {
-         isVerified: true,
-         verificationToken: null,
-         verificationTokenExpiry: null
-      }
-   });
-   return res.json({
-      message: "Email verified Successfully"
-   })
-})
+    const vericationurl = `idonthavedomail.com/verifyemail?token=${token}`;
 
-router.post("/signin", async (req:Request,res: Response) => {
-   const body = req.body;
-   const parsedData = SigninSchema.safeParse(body);
-   if(!parsedData.success) {
-     return res.status(411).json({
-      Message: "Incorrect Inputs"
-     });
-   }
-   const user = await dbClient.user.findFirst({
-      where:{
-         email: parsedData.data.username,
-      }
-   });
-   if(!user) {
-      return res.status(403).json({
-         message: "Sorry credentials are incorrect"
-      });
-   }
-   const ispassowrdValid = await bcrypt.compare(parsedData.data.password, user.password);
+    const mailoptions = {
+        from: 'noreply@yourdomail.com',
+        to: user.email,
+        subject: "Veryfy your email",
+        html: `<p>Place verify your email by clicking the link below:</p> <a href="${vericationurl}"> Verify Email</a>`
+    }
 
-   if(!ispassowrdValid) {
-      return res.status(403).json({
-         Message: "Invalid Credentials"
-      });
-   }
-   const token = jwt.sign({
-      id: user.id
-  }, process.env.JWT_SECRET || "secret");
+    // await transporter.sendMail(mailoptions);
 
-  res.json({
-      token: token,
-  });
+    return res.json({
+        message: "Please verify your account by checking your email"
+    });
 
 })
-router.post("/forgotpassword", async (req:Request, res:Response) => {
-   const { username } = req.body;
-   try {
-       const user = await dbClient.user.findFirst({
-           where: { email: username }
-       });
 
-       if (!user) {
-           return res.status(404).json({ message: "User not found" });
-       }
+router.get("/verifyemail", async (req, res) =>{
+    const token = req.query.token;
 
-       const reset = crypto.randomBytes(20).toString("hex");
-       const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); 
+    const tokenString = Array.isArray(token) ? token : [token];
+    if( typeof tokenString !== 'string') {
+        return res.status(400).json({
+            messsage: "Invalid token formate"
+        });
+    }
 
-       await dbClient.user.update({
-           where: { email: username },
-           data: {
-               resetToken: reset, 
-               resetTokenExpiry
-           }
-       });
+    const user = await dbClient.user.findFirst({
 
-       const resetUrl = `https://yourdomain.com/reset-password?token=${reset}`;
-       const mailOptions = {
-           from: 'noreply@yourdomain.com',
-           to: username,
-           subject: "Password Reset Request",
-           html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${resetUrl}">Reset Password</a>`
-       };
+        where: {
+            verificationToken: tokenString,
+            verificationTokenExpiry: {
+                gte: new Date()
+            }
+        }
+    });
+    if(!user) {
+        return res.json({
+            messaage :"Invalid or Expired token"
+        })
+    };
 
-       // await transporter.sendMail(mailOptions);
-
-       return res.json({ message: "Password reset email sent" });
-   } catch (e) {
-       console.log("Error while resetting the password", e);
-       res.status(500).json({ message: "Internal Server Error" });
-   }
-   });
-
-router.post("/reset-password", async (req:Request,res:Response) => {
-   const { token ,  newPassword } = req.body
-   try {
-       const user = await dbClient.user.findFirst({
-           where: {
-               resetToken: token,
-               resetTokenExpiry: {
-               gte: new Date()
-               }
-           }
-       });
-       if (!user) {
-           return res.json({
-               message: "Invalid or expired token"
-           })
-       }
-
-       const hashedpassword = await bcrypt.hash(newPassword, 10);
-       await dbClient.user.update({
-           where: {
-               id: user.id,
-           },
-           data: {
-               password: hashedpassword,
-               resetToken: null,
-               resetTokenExpiry: null,
-           }
-       });
-       res.json({
-           message: "Password reset succecful"
-       })
-   } catch (e) {
-       console.log("Error while resating passwprd",e);
-       res.status(500).json({
-           message: "Internal server error"
-       })
-       
-   }
+    await dbClient.user.update({
+        where:{
+            id: user.id,
+        },
+        data:{
+            isVerified: true,
+            verificationToken: null,
+            verificationTokenExpiry: null,
+        }
+    });
+    return res.json({
+        message: "Email verified Successfully"
+    });
 })
 
-router.get("/", authMiddleware, async (req: Request, res: Response) => {
-   //@ts-expect-error
-   const id = req.id;
-   const user = await dbClient.user.findFirst({
-       where: {
-           id
-       },
-       select: {
-           name: true,
-           email: true
-       }
-   });
+router.post("/signin",  async (req, res) => {
+    const body = req.body;
+    const parsedData = SigninSchema.safeParse(body);
 
-   return res.json({
-       user
-   });
+    if (!parsedData.success) {
+        return res.status(411).json({
+            message: "Incorrect inputs"
+        })
+    }
+    const user = await dbClient.user.findFirst({
+        where: {
+            email: parsedData.data.username,
+        }
+    });
+    
+    if (!user) {
+        return res.status(403).json({
+            message: "Sorry credentials are incorrect"
+        })
+    }
+    const starthash = Date.now();
+    const isPasswordValid = await bcrypt.compare(parsedData.data.password, user.password);
+    const endhash = Date.now();
+    console.log(`total time for compare: ${endhash - starthash}ms`);
+    
+
+    if (!isPasswordValid) {
+        return res.status(403).json({
+            message: "Invalid  Credentials"
+        });
+    }
+    console.log("after compare");
+    
+
+    const token = jwt.sign({
+        id: user.id
+    }, JWT_SECRET);
+
+    res.json({
+        token: token,
+    });
+})
+
+router.post("/forgotpassword", async (req, res) => {
+    const { username } = req.body;
+    try {
+        const user = await dbClient.user.findFirst({
+            where: { email: username }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const reset = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); 
+
+        await dbClient.user.update({
+            where: { email: username },
+            data: {
+                resetToken: reset, 
+                resetTokenExpiry
+            }
+        });
+
+        const resetUrl = `https://yourdomain.com/reset-password?token=${reset}`;
+        const mailOptions = {
+            from: 'noreply@yourdomain.com',
+            to: username,
+            subject: "Password Reset Request",
+            html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${resetUrl}">Reset Password</a>`
+        };
+
+        // await transporter.sendMail(mailOptions);
+
+        return res.json({ message: "Password reset email sent" });
+    } catch (e) {
+        console.log("Error while resetting the password", e);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+    });
+
+router.post("/reset-password", async (req,res) => {
+    const { token ,  newPassword } = req.body
+    try {
+        const user = await dbClient.user.findFirst({
+            where: {
+                resetToken: token,
+                resetTokenExpiry: {
+                gte: new Date()
+                }
+            }
+        });
+        if (!user) {
+            return res.json({
+                message: "Invalid or expired token"
+            })
+        }
+
+        const hashedpassword = await bcrypt.hash(newPassword, 10);
+        await dbClient.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                password: hashedpassword,
+                resetToken: null,
+                resetTokenExpiry: null,
+            }
+        });
+        res.json({
+            message: "Password reset succecful"
+        })
+    } catch (e) {
+        console.log("Error while resating passwprd",e);
+        res.status(500).json({
+            message: "Internal server error"
+        })
+        
+    }
+})
+
+router.get("/", authMiddleware, async (req, res) => {
+    // TODO: Fix the type
+    // @ts-ignore
+    const id = req.id;
+    const user = await dbClient.user.findFirst({
+        where: {
+            id
+        },
+        select: {
+            name: true,
+            email: true
+        }
+    });
+
+    return res.json({
+        user
+    });
 })
 
 export const userRouter = router;

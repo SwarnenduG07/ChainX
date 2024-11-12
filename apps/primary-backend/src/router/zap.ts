@@ -5,108 +5,111 @@ import { dbClient } from "../db/db.js";
 
 const router = Router();
 
-router.post("/", authMiddleware,  async (req, res) => {
-    //@ts-ignore
-      const id: string = req.id;
-      const body = req.body;
-      const parsedData = ZapSchema.safeParse(body);
-      if (!parsedData.success) {
+router.post("/", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    const id: string = req.id;
+    const body = req.body;
+    const parsedData = ZapSchema.safeParse(body);
+    
+    if (!parsedData.success) {
         return res.status(411).json({
-            message: "Incorrect Inputs"
+            message: "Incorrect inputs"
         });
-      }
-      const zapId = await dbClient.$transaction(async (tx: any) => {
+    }   
+
+    const zapId = await dbClient.$transaction(async (tx) => {
         try {
-            const zap = await tx.zap.create({
-                data: {
-                    userId: parseInt(id),
-                    triggerId: "",
-                    actions: {
-                        create: parsedData.data.actions.map((x, index) => ({
-                            actionId: x.availableActionId,
-                            sortringOrder: index,
-                            metadata: x.actionMetaData,
-                        }))
-                    }
-                }
-            });
-            const trigger = await tx.trigger.create({
-                data: {
-                    triggerId: parsedData.data.availableTriggerId,
-                    zapId: zap.id
-                },
-            });
-            await tx.zap.update({
-                where: {
-                    id: zap.id,
-                },
-                data: {
-                    triggerId
-                    : trigger.id,
-                }
-            });
-            return zap.id;
-        } catch (e) {
-            console.log(e, "Error in zap creation");
-            throw e;
+          const zap = await tx.zap.create({
+            data: {
+              userId: parseInt(id),
+              triggerId: "",
+              actions: {
+                create: parsedData.data.actions.map((x, index) => ({
+                  actionId: x.availableActionId,
+                  sortringOrder: index,
+                  metadata: x.actionMetaData,
+                })),
+              },
+            },
+          });
+      
+          const trigger = await tx.trigger.create({
+            data: {
+              triggerId: parsedData.data.availableTriggerId,
+              zapId: zap.id,
+            },
+          });
+      
+          await tx.zap.update({
+            where: { id: zap.id },
+            data: { triggerId: trigger.id },
+          });
+      
+          return zap.id;
+        } catch (error) {
+          console.error("Error in transaction", error);
+          throw error;  // Ensure transaction rollback
         }
       });
-      return res.json({
-          zapId,
-      })
+    return res.json({
+        zapId
+    })
 })
 
-router.get("/", authMiddleware, async  (req,res) => {
-    //@ts-ignore
+router.get("/", authMiddleware, async (req, res) => {
+    // @ts-ignore
     const id = req.id;
-    const zaps = await dbClient.zap.findFirst({
-      where: {
-        userId: id,
-      },
-      include: {
-        actions: {
-            include: {
-                type: true,
-            },
+    const zaps = await dbClient.zap.findMany({
+        where: {
+            userId: id
         },
-        trigger: {
-            include: {
-                type: true,
+        include: {
+            actions: {
+               include: {
+                    type: true
+               }
+            },
+            trigger: {
+                include: {
+                    type: true
+                }
             }
         }
-      }
-    })
-    return res.json({
-        zaps,
     });
+
+    return res.json({
+        zaps
+    })
 })
 
-router.get("/:zapId", authMiddleware, async (req,res) => {
+router.get("/:zapId", authMiddleware, async (req, res) => {
     //@ts-ignore
     const id = req.id;
     const zapId = req.params.zapId;
 
     const zap = await dbClient.zap.findFirst({
-        where:{
+        where: {
             id: zapId,
-            userId: id,
+            userId: id
         },
         include: {
             actions: {
-                include: {
+               include: {
                     type: true
-                }
+               }
             },
             trigger: {
-                include :{
-                    type: true,
+                include: {
+                    type: true
                 }
             }
         }
     });
+
     return res.json({
-        zap,
+        zap
     })
+
 })
 
 export const zapRouter = router;

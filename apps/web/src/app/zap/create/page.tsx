@@ -5,11 +5,10 @@ import React, { useCallback, useState, useEffect } from "react";
 import ReactFlow, { useNodesState, useEdgesState, addEdge, Background, Controls, MiniMap } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
-
 import { Switch } from "@/components/ui/switch";
 import { Node, NodeProps } from 'reactflow';
-import TriggerNode from "@/components/node/trigger-node";
 import ActionNode from "@/components/node/action-node";
+import TriggerNode from "@/components/node/trigger-node";
 import { BACKEND_URL } from "../../config";
 
 const gridSize = 20;
