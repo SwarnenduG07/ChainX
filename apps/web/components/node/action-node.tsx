@@ -34,7 +34,7 @@ const ActionNode = ({ data }: { data: any }) => {
           ))}
         </div>
         <button
-          className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-3 py-1 rounded-md"
+          className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-3 py-1 rounded-md whitespace-nowrap"
           onClick={() => setSelectedModalIndex(selectedActions.length + 1)}
         >
           Select Action
@@ -86,10 +86,10 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
         name: string;
     }>();
 
-    return <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-slate-100 bg-opacity-70 flex">
+    return <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-opacity-70 flex">
         <div className="relative p-4 w-full max-w-2xl max-h-full">
             <div className="relative bg-white rounded-lg shadow ">
-                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
+                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                     <div className="text-xl">
                         Select {index === 1 ? "Trigger" : "Action"}
                     </div>
@@ -145,7 +145,7 @@ function EmailSelector({setMetadata}: {
         <Input label={"To"} type={"text"} placeholder="To" onChange={(e) => setEmail(e.target.value)}></Input>
         <Input label={"Body"} type={"text"} placeholder="Body" onChange={(e) => setBody(e.target.value)}></Input>
         <div className="pt-2">
-            <Button onClick={() => {
+            <Button className="bg-purple-700 text-neutral-100 font-bold" onClick={() => {
                 setMetadata({
                     email,
                     body
@@ -170,7 +170,7 @@ function SolanaSelector({setMetadata}: {
                 amount,
                 address
             })
-        }}>Submit</Button>
+        }} className="bg-purple-700 text-neutral-100 font-bold">Submit</Button>
         </div>
     </div>
 }
