@@ -3,7 +3,7 @@
 export const Input = ({label, placeholder, onChange, type = "text"}: {
     label: string;
     placeholder: string;
-    onChange: (e: any) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     type?: "text" | "password"
 }) => {
     return <div>
