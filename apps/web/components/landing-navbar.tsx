@@ -46,7 +46,7 @@ export function LandingNavBar():JSX.Element {
                             }}>Log in</Button>
                         </div>
                         <div>
-                            <Button className='rounded-xl w-20 h-8 bg-purple-600 hover:bg-purple-700 hover:shadow-md' onClick={() => {
+                            <Button className='rounded-xl w-20 h-8 bg-purple-600 hover:bg-fuchsia-600 hover:shadow-md' onClick={() => {
                                 router.push("/signup")
                             }}>Signup</Button>
                         </div>
