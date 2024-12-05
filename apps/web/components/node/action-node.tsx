@@ -25,8 +25,10 @@ const ActionNode = ({ data }: { data: any }) => {
         <div className="w-full pt-2 pb-2">
           {selectedActions.map((action: any) => (
             <div key={action.index} className="pt-2 flex justify-center">
-              <ZapCell
-                onClick={() => setSelectedModalIndex(action.index)}
+                <ZapCell
+                onClick={() => {
+                  setSelectedModalIndex(action.index);
+                }}
                 name={action.availableActionName || "Action"}
                 index={action.index}
               />
@@ -35,7 +37,7 @@ const ActionNode = ({ data }: { data: any }) => {
         </div>
         <button
           className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-3 py-1 rounded-md"
-          onClick={() => setSelectedModalIndex(selectedActions.length + 1)}
+          onClick={() => {setSelectedModalIndex(selectedActions.length + 1)}}
         >
           Select Action
         </button>

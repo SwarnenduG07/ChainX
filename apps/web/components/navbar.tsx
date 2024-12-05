@@ -1,18 +1,23 @@
 "use client"
-import { Button } from "./ui/button";
+import { NextResponse } from "next/server";
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
-export default function Navbar() {
+export default function Navbar():JSX.Element {
 
      const router = useRouter();
 
-     const handelSignout = async ()  => {
+     const handelSignout = ()  => {
         try {
                localStorage.removeItem("token");
                sessionStorage.removeItem("token");
                router.push("/")       
         } catch (e) {
-            console.log(e,"Signup failed");
+            return NextResponse.json(
+                {
+                    messsage:"Signup failed"
+                }
+            )
         }
     }
     return (

@@ -12,7 +12,6 @@ export function LandingNavBar():JSX.Element {
         setIsLoggedIn(Boolean(token));
     }, []);
 
-
     const handleSignout = (): void => {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
