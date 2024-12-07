@@ -77,5 +77,6 @@ services:
       DATABASE_URL: postgres://user:password@postgres:5432/mydatabase
       DB_PATH: /usr/src/db
 
+
 volumes:
   postgres_data:
