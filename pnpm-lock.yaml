@@ -79,6 +79,9 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.7
         version: 9.0.7
+      '@types/nodemailer':
+        specifier: ^6.4.16
+        version: 6.4.16
 
   apps/processor:
     dependencies:
