@@ -1,10 +1,10 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 
-export default function VerifyEmail() {
+function VerifyEmailContent(): JSX.Element {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -41,7 +41,7 @@ export default function VerifyEmail() {
       <div>
         <h1>Email Verified Successfully</h1>
         <p>You can now log in to your account.</p>
-        <button onClick={() => router.push('/login')}>Go to Login</button>
+        <button type="button" onClick={() => router.push('/login')}>Go to Login</button>
       </div>
     );
   }
@@ -51,10 +51,18 @@ export default function VerifyEmail() {
       <div>
         <h1>Email Verification Failed</h1>
         <p>The token is invalid or expired.</p>
-        <button onClick={() => router.push('/')}>Go to Homepage</button>
+        <button type="button" onClick={() => router.push('/')}>Go to Homepage</button>
       </div>
     );
   }
 
   return <h1>Email verification route</h1>;
+}
+
+export default function VerifyEmail(): JSX.Element {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <VerifyEmailContent />
+    </Suspense>
+  );
 }

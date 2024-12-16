@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from './ui/button'
 import { Feature } from './features'
 
-function Hero():JSX.Element {
+export  function Hero():JSX.Element {
     const router  = useRouter();
   return (
     <div className=''>
@@ -42,4 +42,3 @@ function Hero():JSX.Element {
   )
 }
 
-export default Hero

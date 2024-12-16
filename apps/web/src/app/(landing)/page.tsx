@@ -1,4 +1,4 @@
-import Hero from "@/components/hero";
+import {Hero} from "@/components/hero";
 import { HeroVideo } from "@/components/hero-video";
 import { LandingFetures } from "@/components/landing-fetures";
 import { LandingNavBar } from "@/components/landing-navbar";

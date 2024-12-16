@@ -17,7 +17,7 @@ router.post("/", authMiddleware, async (req, res) => {
         });
     }   
 
-    const zapId = await dbClient.$transaction(async (tx) => {
+    const zapId = await dbClient.$transaction(async (tx: { zap: { create: (arg0: { data: { userId: number; triggerId: string; actions: { create: { actionId: string; sortringOrder: number; metadata: any; }[]; }; }; }) => any; update: (arg0: { where: { id: any; }; data: { triggerId: any; }; }) => any; }; trigger: { create: (arg0: { data: { triggerId: string; zapId: any; }; }) => any; }; }) => {
         try {
           const zap = await tx.zap.create({
             data: {
