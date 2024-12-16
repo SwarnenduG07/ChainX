@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { HOOKS_URL } from '../config';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useZaps, Zap } from '@/hooks/userZap';
+import { useZaps, Zap } from '@/hooks/user-zap';
+
 
 export default function Dashboard() {
   const routet = useRouter();
