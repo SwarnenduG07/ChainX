@@ -1,6 +1,9 @@
+import dotenv from "dotenv"
+dotenv.config();
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import nodemailer from "nodemailer"
 import bcrypt from 'bcrypt';
 import { JWT_SECRET } from "../config.js";
 import { authMiddleware } from "../middleware.js";
@@ -12,16 +15,32 @@ const generateToken = () => crypto.randomBytes(20).toString("hex");
 const router = Router();
 
 
-// const transporter = nodemailer.createTransport({
-//     host: process.env.SMTP_ENDPOINT,
-//     port: 587,
-//     secure: false, // upgrade later with STARTTLS
-//     auth: {
-//       user: process.env.SMTP_USERNAME,
-//       pass: process.env.SMTP_PASSWORD,
-//     },
-// })
+const sendEmail = async (email: string, subject: string, html: string) => {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST, 
+        port: parseInt(process.env.SMTP_PORT || "587"),
+        secure: false, 
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS, 
+        },
+      });
+  
+      const info = await transporter.sendMail({
+        from: process.env.SMTP_FROM, 
+        to: email,
+        subject,
+        html,
+      });
+  
+      console.log("Email sent successfully:", info);
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  };
 
+  
 router.post("/signup", async (req, res) => {
     const body = req.body;
     const parsedData = SignupSchema.safeParse(body);
@@ -66,16 +85,12 @@ router.post("/signup", async (req, res) => {
     console.log("after hash");
     
 
-    const vericationurl = `idonthavedomail.com/verifyemail?token=${token}`;
-
-    const mailoptions = {
-        from: 'noreply@yourdomail.com',
-        to: user.email,
-        subject: "Veryfy your email",
-        html: `<p>Place verify your email by clicking the link below:</p> <a href="${vericationurl}"> Verify Email</a>`
-    }
-
-    // await transporter.sendMail(mailoptions);
+    const resetUrl = `${process.env.FRONTEND_URL}/veryfi-email`;
+  await sendEmail(
+    parsedData.data.username,
+    "Reset your password",
+    `Please click this link to reset your password: ${resetUrl}`
+  );
 
     return res.json({
         message: "Please verify your account by checking your email"
