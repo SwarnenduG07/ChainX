@@ -8,11 +8,13 @@ import { LandingNavBar } from "@/components/landing-navbar";
 
 export default function Home():JSX.Element {
   return (
-    <div className="pb-48">
-      <LandingNavBar />
-       <Hero />
-       <HeroVideo />
-       <LandingFetures />
+    <div className="relative">
+      <div className="relative z-10">
+        <LandingNavBar />
+        <Hero />
+        <HeroVideo />
+        <LandingFetures />
+      </div>
     </div>
   );
 }

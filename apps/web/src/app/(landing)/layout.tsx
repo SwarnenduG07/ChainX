@@ -1,8 +1,10 @@
+import { BackgroundGradient } from "@/components/background-gradient"
 
 function LandingLayout({children}: {children: React.ReactNode}):JSX.Element {
     return (
-      <main >
-          <div className=" bg-black ">
+      <main className="min-h-screen overflow-hidden">
+          <BackgroundGradient />
+          <div className="relative">
               {children} 
           </div>
       </main>

@@ -20,43 +20,49 @@ export function LandingNavBar():JSX.Element {
     };
 
     return (
-        <nav className='fixed top-0 left-0 right-0 border border-neutral-800 rounded-2xl flex justify-between lg:mx-48 md:mx-24 mx-16 mt-4 p-1 backdrop-blur-sm bg-neutral-800/80'>
-            <div className='ml-10 text-lg font-bold font-mono flex items-center text-neutral-100'>
-                ChainX
-            </div>
-            
-            <div className='flex space-x-3 mr-10'>
-                {!isLoggedIn ? (
-                    <div className='flex items-center space-x-4 text-neutral-100'>
-                        
-                        <div>
-                            <span className=' hover:text-purple-500'>Feature</span>
-                        </div>
-                        <div>
-                            <span className=' hover:text-purple-500'>Pricing</span>
-                        </div>
-                        <div>
-                            <span className=' hover:text-purple-500'>Contact</span>
-                        </div>
-                        
-                        <div>
-                            <Button className='w-20 h-8 rounded-xl hover:bg-zinc-800 hover:text-white' onClick={() => {
-                                router.push("/signin")
-                            }}>Log in</Button>
-                        </div>
-                        <div>
-                            <Button className='rounded-xl w-20 h-8 bg-purple-600 hover:bg-fuchsia-600 hover:shadow-md' onClick={() => {
-                                router.push("/signup")
-                            }}>Signup</Button>
-                        </div>
+        <nav className='fixed top-0 left-0 right-0 z-50'>
+            <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+                <div className='flex h-16 items-center justify-between mt-4'>
+                    <div className='flex-shrink-0'>
+                        <span className='text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent'>
+                            ChainX
+                        </span>
                     </div>
-                ) : (
-                    <div>
-                        <Button className='rounded-full bg-orange-400 hover:bg-red-800 hover:text-white' onClick={handleSignout} variant="ghost">
-                            Logout
-                        </Button>
+                    
+                    <div className='flex items-center gap-x-8'>
+                        {!isLoggedIn ? (
+                            <>
+                                <div className='hidden md:flex items-center space-x-8 text-sm text-neutral-300'>
+                                    <span className='hover:text-purple-400 transition-colors cursor-pointer'>Features</span>
+                                    <span className='hover:text-purple-400 transition-colors cursor-pointer'>Pricing</span>
+                                    <span className='hover:text-purple-400 transition-colors cursor-pointer'>Contact</span>
+                                </div>
+                                
+                                <div className='flex items-center gap-x-4'>
+                                    <Button 
+                                        className='px-6 py-2 rounded-full bg-transparent border border-purple-500 text-purple-400 hover:bg-purple-500/10 transition-all'
+                                        onClick={() => router.push("/signin")}
+                                    >
+                                        Log in
+                                    </Button>
+                                    <Button 
+                                        className='px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:opacity-90 transition-all'
+                                        onClick={() => router.push("/signup")}
+                                    >
+                                        Sign up
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <Button 
+                                className='px-6 py-2 rounded-full bg-gradient-to-r from-orange-400 to-red-600 text-white hover:opacity-90 transition-all'
+                                onClick={handleSignout}
+                            >
+                                Logout
+                            </Button>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </nav>
     );
