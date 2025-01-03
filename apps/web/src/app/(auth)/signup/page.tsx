@@ -7,6 +7,24 @@ import axios from "axios";
 import { BACKEND_URL } from "../../config";
 import { LandingNavBar } from "@/components/landing-navbar";
 import { CheckFeature } from "@/components/checkfeature";
+import { motion } from "framer-motion";
+
+const formVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      staggerChildren: 0.1,
+      duration: 0.5
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0 }
+};
 
 export default function Signup() {
   const router = useRouter();
@@ -32,7 +50,12 @@ export default function Signup() {
     <div>
       <LandingNavBar />
       <div className="flex justify-between">
-        <div className="flex pt-20 max-w-4xl">
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.15 }}
+          className="flex pt-20 max-w-4xl"
+        >
           <div className="flex-1 pt-20 px-4">
             <div className="font-semibold text-3xl pb-4">
               Join millions worldwide who automate their work using Zapier.
@@ -51,7 +74,12 @@ export default function Signup() {
           </div>
 
           <section className="w-full max-w-md mx-auto">
-            <div className="flex flex-col items-center justify-center px-6 py-8">
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={formVariants}
+              className="flex flex-col items-center justify-center px-6 py-8"
+            >
               <a
                 href="#"
                 className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -65,11 +93,14 @@ export default function Signup() {
               </a>
               <div className="w-full bg-white rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-6 space-y-4 sm:p-8">
-                  <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                  <motion.h1 
+                    variants={itemVariants}
+                    className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                  >
                     Create an account
-                  </h1>
+                  </motion.h1>
                   <form className="space-y-4" onSubmit={handleSignup}>
-                    <div>
+                    <motion.div variants={itemVariants}>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Your Name
                       </label>
@@ -82,8 +113,9 @@ export default function Signup() {
                         onChange={(e) => setName(e.target.value)}
                         required
                       />
-                    </div>
-                    <div>
+                    </motion.div>
+                    
+                    <motion.div variants={itemVariants}>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Your Email
                       </label>
@@ -96,8 +128,9 @@ export default function Signup() {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
-                    </div>
-                    <div>
+                    </motion.div>
+                    
+                    <motion.div variants={itemVariants}>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Password
                       </label>
@@ -110,36 +143,50 @@ export default function Signup() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
-                    </div>
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="terms"
-                          aria-describedby="terms"
-                          type="checkbox"
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                          required
-                        />
+                    </motion.div>
+                    
+                    <motion.div variants={itemVariants}>
+                      <div className="flex items-start">
+                        <div className="flex items-center h-5">
+                          <input
+                            id="terms"
+                            aria-describedby="terms"
+                            type="checkbox"
+                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                            required
+                          />
+                        </div>
+                        <div className="ml-3 text-sm">
+                          <label className="font-light text-gray-500 dark:text-gray-300">
+                            I accept the{" "}
+                            <a
+                              className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                              href="#"
+                            >
+                              Terms and Conditions
+                            </a>
+                          </label>
+                        </div>
                       </div>
-                      <div className="ml-3 text-sm">
-                        <label className="font-light text-gray-500 dark:text-gray-300">
-                          I accept the{" "}
-                          <a
-                            className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                            href="#"
-                          >
-                            Terms and Conditions
-                          </a>
-                        </label>
-                      </div>
-                    </div>
-                    <Button
-                      type="submit"
-                      className="bg-orange-500 w-full"
+                    </motion.div>
+                    
+                    <motion.div 
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      Create an account
-                    </Button>
-                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                      <Button
+                        type="submit"
+                        className="bg-orange-500 w-full"
+                      >
+                        Create an account
+                      </Button>
+                    </motion.div>
+                    
+                    <motion.p 
+                      variants={itemVariants}
+                      className="text-sm font-light text-gray-500 dark:text-gray-400"
+                    >
                       Already have an account?{" "}
                       <a
                         href="/signin"
@@ -147,13 +194,13 @@ export default function Signup() {
                       >
                         Login here
                       </a>
-                    </p>
+                    </motion.p>
                   </form>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </section>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -7,6 +7,24 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { LandingNavBar } from "@/components/landing-navbar";
 import { CheckFeature } from "@/components/checkfeature";
+import { motion, stagger } from "framer-motion";
+
+const formVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      staggerChildren: 0.1,
+      duration: 0.5
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0 }
+};
 
 interface SigninResponse {
   token: string;
@@ -48,8 +66,13 @@ export default function SigninPage() {
   return (
     <div className="flex flex-col justify-between">
       <LandingNavBar />
-      <div className="flex mr">
-        <div className="flex pt-20 max-w-4xl">
+      <div className="flex">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex pt-20 max-w-4xl"
+        >
           <div className="flex-1 pt-20 px-4">
             <div className="font-semibold text-3xl pb-4">
               Join millions worldwide who automate their work using Zapier.
@@ -64,21 +87,29 @@ export default function SigninPage() {
               <CheckFeature label={"14-day trial of premium features & apps"} />
             </div>
           </div>
-        </div>
+        </motion.div>
         <div className="ml-20">
           <section>
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={formVariants}
+              className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+            >
               <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                 <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
                 Zapier
               </a>
               <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                  <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                  <motion.h1 
+                    variants={itemVariants}
+                    className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                  >
                     Sign in to your account
-                  </h1>
+                  </motion.h1>
                   <form className="space-y-4 md:space-y-6" onSubmit={handleSignin}>
-                    <div>
+                    <motion.div variants={itemVariants}>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                       <input
                         type="email"
@@ -88,8 +119,8 @@ export default function SigninPage() {
                         placeholder="name@gmail.com"
                         onChange={(e) => setEmail(e.target.value)}
                       />
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div variants={itemVariants}>
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                       <input
                         type="password"
@@ -99,36 +130,47 @@ export default function SigninPage() {
                         className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         onChange={(e) => setPassword(e.target.value)}
                       />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="remember"
-                            aria-describedby="remember"
-                            type="checkbox"
-                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                            onChange={() => setRememberMe(!rememberMe)}
-                          />
+                    </motion.div>
+                    <motion.div variants={itemVariants}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="remember"
+                              aria-describedby="remember"
+                              type="checkbox"
+                              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                              onChange={() => setRememberMe(!rememberMe)}
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">
+                            <label className="text-gray-500 dark:text-gray-300">Remember me</label>
+                          </div>
                         </div>
-                        <div className="ml-3 text-sm">
-                          <label className="text-gray-500 dark:text-gray-300">Remember me</label>
-                        </div>
+                        <a href="/forgotpassword" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
+                          Forgot password?
+                        </a>
                       </div>
-                      <a href="/forgotpassword" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
-                        Forgot password?
-                      </a>
-                    </div>
-                    <Button className="w-full rounded-full bg-orange-700" type="submit">
-                      Sign in
-                    </Button>
-                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                    </motion.div>
+                    <motion.div
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button className="w-full rounded-full bg-orange-700" type="submit">
+                        Sign in
+                      </Button>
+                    </motion.div>
+                    <motion.p 
+                      variants={itemVariants}
+                      className="text-sm font-light text-gray-500 dark:text-gray-400"
+                    >
                       Don’t have an account yet? <a href="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-                    </p>
+                    </motion.p>
                   </form>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </section>
         </div>
       </div>
