@@ -21,7 +21,7 @@ export function LandingFetures():JSX.Element {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className='text-4xl sm:text-6xl font-bold bg-gradient-to-r from-purple-300 via-purple-400 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl'
+              className='text-4xl sm:text-6xl font-bold bg-gradient-to-r from-purple-600 via-purple-700 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl'
             >
                 Build powerful workflows incredibly fast
             </motion.h1>
