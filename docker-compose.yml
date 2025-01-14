@@ -1,0 +1,82 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./apps/backend
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./packages/db:/usr/src/db
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/mydatabase
+      DB_PATH: /usr/src/db
+
+  frontend:
+    build:
+      context: ./apps/frontend
+    ports:
+      - "3000:3000"
+
+  processor:
+    build:
+      context: ./apps/processor
+    depends_on:
+      - kafka
+    volumes:
+      - ./packages/db:/usr/src/db
+    environment:
+      KAFKA_BROKER: kafka:9092
+      DATABASE_URL: postgres://user:password@postgres:5432/mydatabase
+      DB_PATH: /usr/src/db
+
+  worker:
+    build:
+      context: ./apps/worker
+    depends_on:
+      - kafka
+    volumes:
+      - ./packages/db:/usr/src/db
+    environment:
+      KAFKA_BROKER: kafka:9092
+      DATABASE_URL: postgres://user:password@postgres:5432/mydatabase
+      DB_PATH: /usr/src/db
+
+
+volumes:
+  postgres_data:

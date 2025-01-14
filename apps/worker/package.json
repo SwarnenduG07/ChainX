@@ -1,0 +1,33 @@
+{
+  "name": "@repo/worker",
+  "version": "1.0.0",
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "default": "./dist/index.js"
+  },
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -b && node dist/index.js"
+  },
+  
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "@repo/db": "workspace:*",
+    "@solana/web3.js": "^1.95.4",
+    "@types/node": "^20.11.24",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "googleapis": "^144.0.0",
+    "kafkajs": "^2.2.4",
+    "nodemailer": "^6.9.16"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.16"
+  }
+}

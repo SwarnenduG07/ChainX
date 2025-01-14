@@ -1,0 +1,32 @@
+{
+  "name": "@repo/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "version": "1.0.0",
+  "description": "The main db",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "db:migrate": "pnpm dlx prisma migrate dev && pnpm dlx prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "prisma": "5.22.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0"
+  }
+}

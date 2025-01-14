@@ -1,0 +1,12 @@
+dist
+<<<<<<< HEAD
+.env
+node_modules
+.vercel
+=======
+node_modules
+.vercel
+.env
+*.env
+!.env.example
+>>>>>>> a2a935deef130cfd922d9c3d29fc1b0dfb8821de
