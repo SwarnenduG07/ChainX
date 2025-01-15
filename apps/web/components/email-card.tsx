@@ -12,36 +12,14 @@ const Event = [
   }
 ]
 
-const handleGmailEmial = async () => {
-  try {
-
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("Not authenticated");
-    }
-
-    const res = await axios.get(`${BACKEND_URL}/api/v1/trigger/gmail/auth`, {
-      headers: {
-
-         'Authorization': `Bearer ${token}`,
-
-      }
-    });
-    window.location.href = res.data.authUrl;
-  } catch (error) {
-    console.error("Gmail auth error:", error);
-    alert("Authentication failed. Please make sure you're logged in.");
-  }
-}
-
 const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => void, onClose?: () => void }) => {
   const [selectedEvent, setSelectedEvent] = useState(Event[0].title);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [tag, setTag] = useState("")
+  const [tag, setTag] = useState("");
+  const [connectedEmail, setConnectedEmail] = useState<string | null>(null);
 
   const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -65,6 +43,31 @@ const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => voi
       config: selectedEvent === "Tagged Email" ? { tags } : { emailFilter }
     });
     onClose?.();
+  };
+
+  const handleGmailEmail = async () => {
+    try {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      if (!token) throw new Error("Not authenticated");
+
+      const res = await axios.get(`${BACKEND_URL}/api/v1/trigger/gmail/auth`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const authWindow = window.open(res.data.authUrl, 'Gmail Auth', 'width=600,height=600');
+
+      window.addEventListener('message', (event) => {
+        if (event.data.type === 'gmail_auth_callback') {
+          setConnectedEmail(event.data.email);
+        } else if (event.data.type === 'gmail_auth_error') {
+          alert(event.data.error);
+        }
+      });
+
+    } catch (error) {
+      console.error("Gmail auth error:", error);
+      alert("Authentication failed");
+    }
   };
 
   return (
@@ -99,13 +102,45 @@ const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => voi
 
             <div className='space-y-2'>
               <label className='text-xs font-medium text-neutral-50'>Connect Account</label>
-              <div className='bg-[#2d1f00] py-3 px-4 rounded-xl hover:border-purple-400 border border-gray-300 transition-colors duration-200'>
+              <div className='bg-[#2d1f00] py-3 px-4 rounded-xl hover:border-purple-400 border border-gray-300 transition-all duration-200'>
                 <div className='flex justify-between items-center'>
-                  <h1 className='text-sm font-normal text-white'>Connect your account</h1>
-                  <Button className='px-4 h-8 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200'
-                  onClick={handleGmailEmial}>
-                    Connect
-                  </Button>
+                  {!connectedEmail ? (
+                    <div className='flex justify-between items-center w-full'>
+                      <div className='flex items-center gap-2'>
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span className='text-sm font-normal text-gray-300'>Connect Gmail account</span>
+                      </div>
+                      <Button 
+                        className='px-4 h-8 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-all duration-200 flex items-center gap-2'
+                        onClick={handleGmailEmail}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Connect
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center w-full">
+                      <div className='flex items-center gap-2'>
+                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm text-neutral-100 font-medium">{connectedEmail}</span>
+                      </div>
+                      <Button 
+                        onClick={() => setConnectedEmail(null)}
+                        className="px-3 py-1 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-all duration-200 flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Disconnect
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

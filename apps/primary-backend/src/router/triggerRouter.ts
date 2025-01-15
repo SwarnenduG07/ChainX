@@ -49,37 +49,85 @@ router.get("/gmail/callback", async (req, res) => {
             throw new Error("No authorization code received");
         }
 
-        // Set up OAuth2 client
         const oauth2Client = new google.auth.OAuth2(
             process.env.GMAIL_CLIENT_ID,
             process.env.GMAIL_CLIENT_SECRET,
             process.env.GMAIL_REDIRECT_URI
         );
 
-        // Verify state token
         req.headers.authorization = `Bearer ${state}`;
         
         authMiddleware(req, res, async () => {
             try {
-                // Exchange code for tokens
                 const { tokens } = await oauth2Client.getToken(code as string);
                 
                 if (!req.user?.id) {
                     throw new Error("No user ID found");
                 }
 
+                oauth2Client.setCredentials(tokens);
+                const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+                const profile = await gmail.users.getProfile({ userId: 'me' });
+                const userEmail = profile.data.emailAddress;
+
                 await setupGmailHook(req.user.id, tokens);
-                console.log('Gmail setup successful');
+
+                // Send HTML response instead of JSON
+                const html = `
+                    <html>
+                        <body>
+                            <script>
+                                window.opener.postMessage(
+                                    { 
+                                        type: 'gmail_auth_callback',
+                                        email: '${userEmail}'
+                                    }, 
+                                    '*'
+                                );
+                                window.close();
+                            </script>
+                        </body>
+                    </html>
+                `;
                 
-                res.redirect(`${process.env.FRONTEND_URL}/zap/create`);
+                res.send(html);
             } catch (error) {
-                console.error('OAuth error:', error);
-                res.redirect(`${process.env.FRONTEND_URL}/error?message=gmail_setup_failed`);
+                const errorHtml = `
+                    <html>
+                        <body>
+                            <script>
+                                window.opener.postMessage(
+                                    { 
+                                        type: 'gmail_auth_error',
+                                        error: 'Gmail setup failed'
+                                    }, 
+                                    '*'
+                                );
+                                window.close();
+                            </script>
+                        </body>
+                    </html>
+                `;
+                res.send(errorHtml);
             }
         });
-    } catch (error: any) {
-        console.error('Gmail callback error:', error);
-        res.redirect(`${process.env.FRONTEND_URL}/error?message=gmail_setup_failed`);
+    } catch (error) {
+        res.send(`
+            <html>
+                <body>
+                    <script>
+                        window.opener.postMessage(
+                            { 
+                                type: 'gmail_auth_error',
+                                error: 'Gmail setup failed'
+                            }, 
+                            '*'
+                        );
+                        window.close();
+                    </script>
+                </body>
+            </html>
+        `);
     }
 });
 
