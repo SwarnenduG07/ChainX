@@ -4,6 +4,25 @@ import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { motion } from 'framer-motion';
 
+const navVariants = {
+    hidden: { y: -100, opacity: 0 },
+    visible: { 
+        y: 0, 
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+            duration: 0.5
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0 }
+};
+
 export function LandingNavBar(): JSX.Element {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,15 +44,16 @@ export function LandingNavBar(): JSX.Element {
 
     return (
         <motion.nav
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
+            variants={navVariants}
+            initial="hidden"
+            animate="visible"
             className="fixed top-0 left-0 right-0 z-50"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between mt-4">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         className="flex-shrink-0"
                     >
                         <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
@@ -45,15 +65,21 @@ export function LandingNavBar(): JSX.Element {
                         {!isLoggedIn ? (
                             <>
                                 <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.2 }}
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
                                     className="hidden md:flex items-center space-x-8 text-sm text-neutral-300"
                                 >
                                     {['Features', 'Pricing', 'Contact'].map((item) => (
                                         <motion.span
                                             key={item}
-                                            whileHover={{ scale: 1.1, color: '#A78BFA' }}
+                                            variants={itemVariants}
+                                            whileHover={{ 
+                                                scale: 1.1, 
+                                                color: '#A78BFA',
+                                                transition: { duration: 0.2 }
+                                            }}
                                             className="cursor-pointer"
                                         >
                                             {item}
@@ -63,8 +89,9 @@ export function LandingNavBar(): JSX.Element {
                                 </motion.div>
 
                                 <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
                                     transition={{ delay: 0.4 }}
                                     className="flex items-center gap-x-4"
                                 >
@@ -87,7 +114,11 @@ export function LandingNavBar(): JSX.Element {
                                 </motion.div>
                             </>
                         ) : (
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <motion.div 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                            >
                                 <Button
                                     className="px-6 py-2 rounded-full bg-gradient-to-r from-orange-400 to-red-600 text-white hover:opacity-90 transition-all"
                                     onClick={handleSignout}
