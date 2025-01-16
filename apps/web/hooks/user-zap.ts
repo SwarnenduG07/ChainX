@@ -49,10 +49,8 @@ export function useZaps() {
       return;
     }
 
-    // Set authorization header explicitly for this request
     const headers = {
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
     };
 
     axios.get<ZapsResponse>(`${BACKEND_URL}/api/v1/zap`, { headers })
@@ -72,5 +70,7 @@ export function useZaps() {
       });
   }, [router]);
 
-  return { loading, zaps };
+  return { 
+     loading, zaps 
+  };
 }

@@ -5,7 +5,7 @@ import { JsonObject } from "@repo/db";
 import { sendEmail } from "./email/sendEmail.js";
 import { sendSol } from "./solana.js";
 import { saveToNotion } from "./notion/SaveToNotion.js";
-import { fetchEmailWithTag } from "./email/gettaggedEmail.js";
+import { fetchEmailWithTag } from "./email/getTaggedEmails.js";
 
 const TOPIC_NAME = "zap-events";
 

@@ -80,6 +80,8 @@ export default function App() {
 
    
     try {
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
       const response = await axios.post(`${BACKEND_URL}/api/v1/zap`, {
         availableTriggerId: selectedTrigger.id,
         triggerMetadata: {},
@@ -89,7 +91,7 @@ export default function App() {
         })),
       }, {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          'Authorization': `Bearer ${token}`,
         }
       });
 
