@@ -30,7 +30,6 @@ export function LandingNavBar(): JSX.Element {
     useEffect(() => {
         if (typeof window !== "undefined") {
             const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-            console.log("Token:", token); // Debugging
             setIsLoggedIn(Boolean(token));
         }
     }, []);
@@ -49,7 +48,7 @@ export function LandingNavBar(): JSX.Element {
             animate="visible"
             className="fixed top-0 left-0 right-0 z-50"
         >
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 backdrop-blur-sm">
                 <div className="flex h-16 items-center justify-between mt-4">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
@@ -69,7 +68,7 @@ export function LandingNavBar(): JSX.Element {
                                     initial="hidden"
                                     animate="visible"
                                     transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
-                                    className="hidden md:flex items-center space-x-8 text-sm text-neutral-300"
+                                    className="hidden md:flex items-center space-x-8 text-sm text-neutral-200 lg:mr-64 md:mr-56 bg-transparent border border-zinc-800 px-6 py-2 rounded-full "
                                 >
                                     {['Features', 'Pricing', 'Contact'].map((item) => (
                                         <motion.span
@@ -97,7 +96,7 @@ export function LandingNavBar(): JSX.Element {
                                 >
                                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                         <Button
-                                            className="px-6 py-2 rounded-full bg-transparent border border-purple-500 text-purple-400 hover:bg-purple-500/10 transition-all"
+                                            className="px-6  rounded-full bg-transparent border border-purple-500 text-purple-400 hover:bg-purple-500/10 transition-all"
                                             onClick={() => router.push("/signin")}
                                         >
                                             Log in
@@ -105,7 +104,7 @@ export function LandingNavBar(): JSX.Element {
                                     </motion.div>
                                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                         <Button
-                                            className="px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:opacity-90 transition-all"
+                                            className="px-6  rounded-full bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:opacity-90 transition-all"
                                             onClick={() => router.push("/signup")}
                                         >
                                             Sign up

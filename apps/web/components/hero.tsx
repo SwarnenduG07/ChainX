@@ -1,45 +1,49 @@
 "use client"
 import { useRouter } from 'next/navigation'
 import { Button } from './ui/button'
-import { Feature } from './features'
+import { BlackHole } from './black-hole';
 
-
-export  function Hero():JSX.Element {
-    const router  = useRouter();
+export function Hero():JSX.Element {
+  const router = useRouter();
+  
   return (
-    <div className=''>
-        <div className='flex justify-center'>
-            <div className=' text-center pt-20 text-neutral-50'>
-                <h1 className='text-6xl font-thin  text-center pt-8  text-neutral-50'>
-                    The No-Code Automation Platform 
-                </h1>
-                <h1 className='text-3xl font-light pt-12'>Automate as fast as you can type</h1>
-                
-            </div>
-        </div>        
-        <div className='flex justify-center'>
-            <div className='text-xl font-normal text-center pt-10 max-w-xl text-neutral-200'>
-            AI gives you automation superpowers, and ChainX puts them to work. Pairing AI and chainX helps you turn ideas into workflows and bots that work for you.
-            </div>
-        </div>     
-        <div className='flex justify-center pt-4 space-x-4'>
-            <Button className='rounded-full w-52 py-6 bg-purple-500 text-lg' onClick={() => {
-                router.push("/signup")
-            }}>
-                Get started
-            </Button>
-            <Button className='rounded-full w-52 py-6 text-lg' onClick={() => {
-                router.push("/signup")
-            }} variant="outline">
-                Contact Sales
-            </Button>
-        </div>   
-        <div className="flex justify-center pt-4 text-neutral-50">
-            <Feature subtitle="for core features" title="Free Forever" />
-            <Feature subtitle="than any other platforms" title="More apps" />
-            <Feature subtitle="AI Features" title="Cutting Edge" />
-        </div>
-    </div>
-  )
-}
+    <div className='relative min-h-[80vh] flex flex-col items-center justify-start pt-20'>
+      <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='text-center space-y-8 relative z-10'>
+          <div className="absolute inset-x-0 top-40 pointer-events-none">
+            <BlackHole />
+          </div>
 
+          <h1 className='text-7xl font-medium tracking-tight text-neutral-200/90  drop-shadow-lg'>
+              Make life Easy with ChainX
+          </h1>
+          
+          <p className='text-xl text-white/80 max-w-2xl mx-auto relative z-20 drop-shadow-md'>
+            Auto mate your workflows with us
+          </p>
+
+          <div className='inline-flex items-center gap-4 mt-8 relative z-20'>
+            <Button 
+              onClick={() => router.push('/signup')}
+              size="lg"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+            >
+              Start free trial
+            </Button>
+            <Button 
+              variant="ghost"
+              size="lg"
+              className="text-white/90 hover:text-white hover:bg-white/10 px-8 py-6 text-lg"
+            >
+              Learn more
+            </Button>
+          </div>
+
+          <div className='mt-16'>
+            {/* <Feature /> */}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
