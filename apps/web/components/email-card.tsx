@@ -38,9 +38,10 @@ const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => voi
 
   const handleSave = () => {
     setMetadata({
-      tag:tag,
+      type: "email",
+      tag: tags[0], // Store the first tag to watch for
       event: selectedEvent,
-      config: selectedEvent === "Tagged Email" ? { tags } : { emailFilter }
+      emailAddress: connectedEmail
     });
     onClose?.();
   };

@@ -6,8 +6,11 @@ import { dbClient } from "../db/db.js";
 const router = Router();
 
 router.post("/", authMiddleware, async (req, res) => {
-    // @ts-ignore
-    const id: string = req.id;
+
+    const id = req.user?.id;
+    if (id === undefined) {
+        return res.status(400).json({ message: "User ID is missing" });
+    }
     const body = req.body;
     const parsedData = ZapSchema.safeParse(body);
     
@@ -21,7 +24,7 @@ router.post("/", authMiddleware, async (req, res) => {
         try {
           const zap = await tx.zap.create({
             data: {
-              userId: parseInt(id),
+              userId: id,
               triggerId: "",
               actions: {
                 create: parsedData.data.actions.map((x, index) => ({
@@ -47,7 +50,7 @@ router.post("/", authMiddleware, async (req, res) => {
       
           return zap.id;
         } catch (error) {
-          console.error("Error in transaction", error);
+          console.error("Error while transaction", error);
           throw error;  // Ensure transaction rollback
         }
       });
@@ -57,8 +60,8 @@ router.post("/", authMiddleware, async (req, res) => {
 })
 
 router.get("/", authMiddleware, async (req, res) => {
-    // @ts-ignore
-    const id = req.id;
+    
+    const id = req.user?.id;
     const zaps = await dbClient.zap.findMany({
         where: {
             userId: id
@@ -83,8 +86,7 @@ router.get("/", authMiddleware, async (req, res) => {
 })
 
 router.get("/:zapId", authMiddleware, async (req, res) => {
-    //@ts-ignore
-    const id = req.id;
+    const id = req.user?.id;
     const zapId = req.params.zapId;
 
     const zap = await dbClient.zap.findFirst({
