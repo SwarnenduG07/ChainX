@@ -91,7 +91,7 @@ export function BlackHole() {
         {/* Core Layers */}
         <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[400px] h-[200px]">
           {/* Deep Purple Core */}
-          <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#1a0b2e] via-[#2d1b4e] to-transparent opacity-95" />
+          <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#a171df] via-[#2d1b4e] to-transparent opacity-95" />
           
           {/* First Purple Layer */}
           <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-transparent via-[#6935c0] to-[#a855f7] opacity-60 blur-[1px]" />
@@ -112,7 +112,7 @@ export function BlackHole() {
           <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#1a0b2e] via-[#6935c0] to-[#d8b4fe] opacity-50 blur-md" />
           
           {/* Second Arc Layer */}
-          <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#2d1b4e] via-[#9333ea] to-white opacity-40 blur-xl" />
+          <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#eb42be] via-[#9333ea] to-white opacity-40 blur-xl" />
           
           {/* Third Arc Layer */}
           <div className="absolute inset-0 rounded-t-full bg-gradient-to-t from-[#1a0b2e] via-[#6935c0] to-[#d8b4fe] opacity-30 blur-2xl" />

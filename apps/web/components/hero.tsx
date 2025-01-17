@@ -39,9 +39,6 @@ export function Hero():JSX.Element {
             </Button>
           </div>
 
-          <div className='mt-16'>
-            {/* <Feature /> */}
-          </div>
         </div>
       </div>
     </div>
