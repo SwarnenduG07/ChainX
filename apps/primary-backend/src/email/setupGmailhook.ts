@@ -13,7 +13,7 @@ export async function setupGmailHook(userId: number, tokens: any) {
 
         oauth2Client.setCredentials(tokens);
         
-        // Store tokens in database first
+        // Store tokens in database using the GmailAuth schema
         await dbClient.gmailAuth.create({
             data: {
                 refreshToken: tokens.refresh_token || '',
@@ -29,7 +29,7 @@ export async function setupGmailHook(userId: number, tokens: any) {
 
         const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 
-        // Set up Gmail push notifications with proper topic name
+        // Set up Gmail watch
         const response = await gmail.users.watch({
             userId: 'me',
             requestBody: {

@@ -14,6 +14,14 @@ const kafka = new Kafka({
     brokers: ["localhost:9092"],
 })
 
+// Add type definition
+interface NotionMetadata {
+    tag?: string;
+    databaseId?: string;
+    title?: string;
+    properties?: string;
+}
+
 async function main() {
      const consumer = kafka.consumer({
         groupId: "main-worker",
@@ -73,14 +81,61 @@ async function main() {
                 console.log(`Sending out sol of ${amount} to address ${address}`);
                 await sendSol(address, amount, zapRunId);
             }
-          if(currentAction?.type.id === "save-to-notion") {
-                const tag = Parse((currentAction.metadata as JsonObject)?.tag as string, zapRunMetaData);
-                const emails = await fetchEmailWithTag(tag);
-                const databaseId = Parse((currentAction.metadata as JsonObject)?.notionDatabaseId as string, zapRunMetaData);
-                console.log(`Saving ${emails.length} to notion database ${databaseId}`);
-                await saveToNotion(databaseId, emails);
-                
-          }
+            if(currentAction?.type.id === "notion") {
+                try {
+                    // Get metadata from zapRunDetails with type assertion
+                    const runMetadata = zapRunDetails?.metadata as NotionMetadata || {};
+                    console.log("ZapRun metadata:", runMetadata);
+                    
+                    // Type-safe property access
+                    const databaseId = runMetadata?.databaseId;
+                    const tag = runMetadata?.tag;
+
+                    if (!databaseId) {
+                        console.error("Missing Notion database ID in metadata");
+                        return;
+                    }
+
+                    if (!tag) {
+                        console.error("Missing email tag in metadata");
+                        return;
+                    }
+
+                    console.log(`Fetching emails with tag: ${tag}`);
+                    const emails = await fetchEmailWithTag(tag);
+                    
+                    if (!emails || emails.length === 0) {
+                        console.log("No matching emails found");
+                        return;
+                    }
+
+                    console.log(`Found ${emails.length} emails, saving to Notion database ${databaseId}`);
+                    await saveToNotion(databaseId, emails);
+                    
+                    // Send next stage message
+                    const lastState = (zapRunDetails?.zap.actions?.length || 1) - 1;
+                    if (lastState !== stage) {
+                        await producer.send({
+                            topic: TOPIC_NAME,
+                            messages: [{
+                                value: JSON.stringify({
+                                    stage: stage + 1,
+                                    zapRunId,
+                                })
+                            }]
+                        });
+                    }
+
+                    console.log("Processing done");
+                    await consumer.commitOffsets([{
+                        topic: TOPIC_NAME,
+                        partition,
+                        offset: (parseInt(message.offset) + 1).toString(),
+                    }]);
+                } catch (error) {
+                    console.error("Error processing notion action:", error);
+                }
+            }
             await new Promise(r => setTimeout(r, 500));
             const zapId = message.value.toString();
             const lastState = (zapRunDetails?.zap.actions?.length || 1) -1;

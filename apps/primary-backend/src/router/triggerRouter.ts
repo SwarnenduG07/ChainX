@@ -134,25 +134,53 @@ router.get("/gmail/callback", async (req, res) => {
 router.post("/gmail/notification", async (req, res) => {
     try {
         const data = req.body;
+        console.log("Received Gmail notification:", data);
         
-        if (data.labelIds?.includes('INBOX')) {
-            await dbClient.$transaction(async tx => {
-                const run = await tx.zapRun.create({
-                    data: {
-                        zapId: 'save-to-notion',
-                        metadata: {
-                            messageId: data.emailId,
-                            label: data.labelIds[0]
+        const triggers = await dbClient.trigger.findMany({
+            where: {
+                type: {
+                    id: "email"
+                }
+            },
+            include: {
+                zap: {
+                    include: {
+                        actions: {
+                            where: {
+                                actionId: "notion"
+                            }
                         }
                     }
-                });
+                }
+            }
+        });
 
-                await tx.zapRunOutBox.create({
-                    data: { zapRunId: run.id }
+        for (const trigger of triggers) {
+            const metadata = trigger.metadata as any;
+            const tag = metadata?.tag;
+            const notionAction = trigger.zap?.actions?.[0];
+            
+            if (data.labelIds?.includes(tag) && notionAction) {
+                console.log(`Processing email with tag: ${tag}`);
+                
+                await dbClient.$transaction(async tx => {
+                    const run = await tx.zapRun.create({
+                        data: {
+                            zapId: trigger.zapId,
+                            metadata: {
+                                messageId: data.emailId,
+                                tag: tag,
+                                notionDatabaseId: metadata.notionDatabaseId
+                            }
+                        }
+                    });
+
+                    await tx.zapRunOutBox.create({
+                        data: { zapRunId: run.id }
+                    });
                 });
-            });
+            }
         }
-
         res.status(200).send('OK');
     } catch (error) {
         console.error('Webhook error:', error);

@@ -17,13 +17,13 @@ async function main() {
     })
     producer.send({
         topic: TOPIC_NAME,
-        messages: pendingRow.map(r => {
-            return {
-                value :JSON.stringify({
-                     zaprunId:r.zapRunId, stage: 0
-                })
-            }
-        })
+        messages: pendingRow.map(r => ({
+            value: JSON.stringify({
+                zapRunId: r.zapRunId, 
+                stage: 0,
+
+            })
+        }))
     });
     await dbClient.zapRunOutBox.deleteMany({
         where: {
