@@ -38,7 +38,6 @@ export function Hero():JSX.Element {
               Learn more
             </Button>
           </div>
-
         </div>
       </div>
     </div>

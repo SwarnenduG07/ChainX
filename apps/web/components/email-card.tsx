@@ -37,11 +37,21 @@ const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => voi
   };
 
   const handleSave = () => {
+    if (!tags.length) {
+      alert('Please add at least one tag');
+      return;
+    }
+
+    // Fix metadata structure
     setMetadata({
       type: "email",
-      tag: tags[0], // Store the first tag to watch for
-      event: selectedEvent,
-      emailAddress: connectedEmail
+      triggerId: "email",
+      metadata: {
+        tag: tags[0],
+        event: selectedEvent,
+        emailAddress: connectedEmail,
+        notionDatabaseId: "",
+      }
     });
     onClose?.();
   };
