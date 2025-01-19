@@ -5,10 +5,6 @@ import { google } from "googleapis";
 import { setupGmailHook } from "../email/setupGmailhook.js";
 import { authMiddleware } from "../middleware.js";
 
-
-
-
-
 const oauth2Client = new google.auth.OAuth2(
     process.env.GMAIL_CLIENT_ID ,
     process.env.GMAIL_CLIENT_SECRET,
