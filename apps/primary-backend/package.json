@@ -13,6 +13,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^4.9.0",
     "@repo/db": "workspace:*",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
