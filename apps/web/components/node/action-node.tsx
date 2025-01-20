@@ -5,7 +5,7 @@ import { useAvailableActionsAndTriggers } from "@/hooks/useaction-trigger";
 import { ZapCell } from "../zapcell";
 import { Input } from "../input";
 import { Settings2 } from "lucide-react";
-import { m } from "framer-motion";
+import NotionSelection from "../actioncard/notion-card";
 
 const ActionNode = ({ data }: { data: any }) => {
   const { availableActions } = useAvailableActionsAndTriggers();
@@ -123,7 +123,7 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
               metadata
             })
           }} />}
-
+    
           {(step === 1 && selectedAction?.id === "send-sol") && <SolanaSelector setMetadata={(metadata) => {
             onSelect({
               ...selectedAction,
@@ -131,12 +131,14 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
             })
           }} />}
 
+          <div className="bg-red-500">
           {(step === 1 && selectedAction?.id === "notion") && <NotionSelection setMetadata={(metadata) => {
             onSelect({
               ...selectedAction,
               metadata 
             })
           }} />}
+          </div>
 
           {step === 0 && <div>{availableItems.map(({ id, name, image }) => {
             return <div onClick={() => {
@@ -195,25 +197,6 @@ function SolanaSelector({ setMetadata }: {
     </div>
   </div>
 }
-function NotionSelection({setMetadata}: {setMetadata: (params: any) => void;}) {
-  const [databaseId, setDatabaseId] = useState("");
-  const [title, setTitle] = useState("");
-  const [properties, setProperties] = useState("");
-  return <div>
-    <Input label={"Database ID"} type={"text"} placeholder="Database ID" onChange={(e) => setDatabaseId(e.target.value)}></Input>
-    <Input label={"Title"} type={"text"} placeholder="Title" onChange={(e) => setTitle(e.target.value)}></Input>
-    <Input label={"Properties"} type={"text"} placeholder="Properties" onChange={(e) => setProperties(e.target.value)}></Input>
-    <div className="pt-4">
-      <Button onClick={() => {
-        setMetadata({
-          databaseId,
-          title,
-          properties
-        })
-      }}>Submit</Button>
-    </div>
-  </div>
 
-}
 
 export default ActionNode;

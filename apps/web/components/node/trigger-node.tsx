@@ -1,7 +1,7 @@
 import { useAvailableActionsAndTriggers } from "@/hooks/useaction-trigger";
 import React, { useState } from "react";
 import { Handle, Position } from "reactflow"; 
-import EmailCard from "../email-card";
+import EmailCard from "../triggercard/email-card";
 
 const TriggerNode = ({ data }: { data: any }) => {
   const { availableTriggers } = useAvailableActionsAndTriggers();

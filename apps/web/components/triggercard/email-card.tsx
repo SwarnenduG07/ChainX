@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from './ui/button';
 import axios from 'axios';
 import { BACKEND_URL } from '@/src/app/config';
+import { Button } from '../ui/button';
 
 const Event = [
   {
