@@ -131,7 +131,7 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
             })
           }} />}
 
-          <div className="bg-red-500">
+          <div className="">
           {(step === 1 && selectedAction?.id === "notion") && <NotionSelection setMetadata={(metadata) => {
             onSelect({
               ...selectedAction,

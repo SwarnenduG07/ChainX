@@ -18,7 +18,6 @@ const EmailCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => voi
   const [inputValue, setInputValue] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [tag, setTag] = useState("");
   const [connectedEmail, setConnectedEmail] = useState<string | null>(null);
 
   const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
