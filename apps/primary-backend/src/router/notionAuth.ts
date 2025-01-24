@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import axios from "axios";
 import { Router } from "express";
 import { authMiddleware } from "../middleware.js";
@@ -34,37 +35,80 @@ router.post("/notion/auth", authMiddleware, async (req,res) => {
 })
 
 
-router.get("/notion/callback", async (req,res) => {
-  const {code} = req.query;
+router.get("/notion/callback", async (req, res) => {
+    const { code } = req.query;
 
-  if(!code) {
-      return res.status(400).json({
-          message: "AUthorization Code is missing"
-      })
-  }
-
-  try {
-     const response = await axios.post("https://api.notion.com/v1/oauth/token", {
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: process.env.NOTION_REDIRECT_URI,
-        client_id: process.env.NOTION_CLIENT_ID,
-        client_secret: process.env.NOTION_CLIENT_SECRET,
-     });
-
-     const { access_token, workspace_id, workspace_name } = response.data;
-
-     res.status(200).json({
-         access_token,
-         workspace_id,
-         workspace_name,
-     })
-  } catch (error: any) {
-    console.error('Error during token exchange:', error.response.data || error.message);
-    res.status(500).send('Failed to connect to Notion');
+    if (!code) {
+        return res.status(400).json({
+            message: "Authorization Code is missing"
+        });
+    }
     
-  }
-})
+    try {
+        const credentials = Buffer.from(
+            `${process.env.NOTION_OAUTH_CLIENT_ID}:${process.env.NOTION_OAUTH_CLIENT_SECRET}`
+        ).toString('base64');
+
+        const response = await axios.post(
+            "https://api.notion.com/v1/oauth/token",
+            {
+                grant_type: "authorization_code",
+                code,
+                redirect_uri: process.env.NOTION_REDIRECT_URI
+            },
+            {
+                headers: {
+                    'Authorization': `Basic ${credentials}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const { access_token, workspace_id, workspace_name } = response.data;
+
+        // Send HTML response with postMessage
+        const html = `
+            <html>
+                <body>
+                    <script>
+                        window.opener.postMessage(
+                            { 
+                                type: 'notion_auth_callback',
+                                access_token: '${access_token}',
+                                workspace_id: '${workspace_id}',
+                                workspace_name: '${workspace_name}'
+                            }, 
+                            '*'
+                        );
+                        window.close();
+                    </script>
+                </body>
+            </html>
+        `;
+        
+        return res.send(html);
+
+    } catch (error: any) {
+        const errorHtml = `
+            <html>
+                <body>
+                    <script>
+                        window.opener.postMessage(
+                            { 
+                                type: 'notion_auth_error',
+                                error: '${encodeURIComponent(error.message || 'Failed to connect to Notion')}'
+                            }, 
+                            '*'
+                        );
+                        window.close();
+                    </script>
+                </body>
+            </html>
+        `;
+        return res.send(errorHtml);
+    }
+});
+
 router.get("/notion/databases", authMiddleware, async (req, res) => {
     try {
       const token = req.headers.authorization?.split(" ")[1];

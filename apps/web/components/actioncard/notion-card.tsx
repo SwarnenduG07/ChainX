@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 
 console.log("BACKEND_URL", BACKEND_URL);
 
-const NOITON_AUTHORIZATION_URL=`https://api.notion.com/v1/oauth/authorize?client_id=171d872b-594c-8051-9348-0037f82b2b84&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3002%2Fapi%2Fv1%2FnotionAuth%2Fnotion%2Fcallback`;
+const NOITON_AUTHORIZATION_URL=`https://api.notion.com/v1/oauth/authorize?client_id=171d872b-594c-8051-9348-0037f82b2b84&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fzap%2Fcreate`;
 
 const Event = [
   {
@@ -31,8 +31,14 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
   const [inputValue, setInputValue] = useState('');
   const [page, setPage] = useState(1);
   const [connectNotion, setconnectNotion] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [workspaceName, setWorkspaceName] = useState('');
+  const [isConnected, setIsConnected] = useState(() => {
+    const token = localStorage.getItem('notion_access_token');
+    return !!token;
+  });
+  const [workspaceName, setWorkspaceName] = useState(() => {
+    return localStorage.getItem('notion_workspace_name') || '';
+  });
+  const [accessToken, setAccessToken] = useState('');
 
   const handleSave = () => {
     if (!tags.length) {
@@ -103,6 +109,24 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
     }
 }, []);
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'notion_auth_callback') {
+        setIsConnected(true);
+        setWorkspaceName(event.data.workspace_name);
+        setconnectNotion(event.data.access_token);
+        localStorage.setItem('notion_access_token', event.data.access_token);
+        localStorage.setItem('notion_workspace_name', event.data.workspace_name);
+      } else if (event.data.type === 'notion_auth_error') {
+        // Handle error
+        console.error('Notion auth error:', event.data.error);
+      }
+    };
+  
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   const handleDatabaseSelect = (databaseId: string) => {
     setSelectedDatabase(databaseId);
     setMetadata({ notionDatabaseId: databaseId });
@@ -112,8 +136,8 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
   const handleDisconnect = () => {
     setIsConnected(false);
     setWorkspaceName('');
-    setSelectedDatabase('');
-    // Clear any stored Notion tokens/data here
+    setAccessToken('');
+    localStorage.removeItem('notion_access_token');
   };
 
   const handleNotionAuthCallback = (params: URLSearchParams) => {
@@ -157,36 +181,33 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
                   <label className='text-xs font-medium text-neutral-50'>Connect Account</label>
                   <div className='bg-[#2d1f00] py-3 px-4 rounded-xl hover:border-purple-400 border border-gray-300 transition-all duration-200'>
                     <div className='flex justify-between items-center'>
-                      {!connectNotion ? (
-                        <div className='flex justify-between items-center w-full'>
-                          <div className='flex items-center gap-2'>
-                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <span className='text-sm font-normal text-gray-300'>Connect Notion account</span>
-                          </div>
-                          <Button 
-                            className='px-4 h-8 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-all duration-200 flex items-center gap-2'
-                            onClick={handleNotionAuth}
-                          >
-                            Connect
-                          </Button>
-                        </div>
+                      {!isConnected ? (
+                        <Button
+                          onClick={handleNotionAuth}
+                          className="w-full py-2.5 text-sm font-medium text-neutral-100 bg-neutral-800 hover:bg-neutral-700 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+                        > 
+                          Connect Notion
+                        </Button>
                       ) : (
-                        <div className="flex justify-between items-center w-full">
-                          <div className='flex items-center gap-2'>
+                        <div className="flex justify-between items-center w-full p-3 border border-neutral-800 rounded-xl">
+                          <div className="flex items-center gap-2">
                             <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span className="text-sm text-neutral-100 font-medium">Connected to Notion</span>
+                            <div>
+                              <span className="text-sm text-neutral-100 font-medium block">{workspaceName}</span>
+                              <span className="text-xs text-neutral-400">Connected Workspace</span>
+                            </div>
                           </div>
                           <Button 
                             onClick={() => {
+                              setIsConnected(false);
+                              setWorkspaceName('');
                               setconnectNotion(null);
                               localStorage.removeItem('notion_access_token');
-                              localStorage.removeItem('notion_workspace_id');
+                              localStorage.removeItem('notion_workspace_name');
                             }}
-                            className="px-3 py-1 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-all duration-200 flex items-center gap-1"
+                            className="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all duration-200"
                           >
                             Disconnect
                           </Button>
@@ -200,7 +221,7 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
                   <Button 
                     className='w-full py-2.5 text-sm font-medium text-white bg-fuchsia-600 hover:bg-fuchsia-700 rounded-xl transition-colors duration-200'
                     onClick={() => setPage(2)}
-                    disabled={!connectNotion}
+                    disabled={!isConnected}
                   >
                     Next
                   </Button>
