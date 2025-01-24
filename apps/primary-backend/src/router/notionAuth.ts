@@ -8,107 +8,81 @@ const router = Router();
 const NOITON_AUTHORIZATION_URL = process.env.NOITON_AUTHORIZATION_URL || "";
 
 
-router.post("/notion/auth", authMiddleware, async (req,res) => {
+router.get("/notion/auth", authMiddleware, async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ error: "Authorization token is required" });
+      const token = req.headers.authorization?.split(" ")[1];
+      const redirectTo = req.query.redirectTo || process.env.FRONTEND_ORIGIN;
+  
+      const state = encodeURIComponent(
+        JSON.stringify({ token, redirectTo })
+      );
+  
+      const params = new URLSearchParams({
+        client_id: process.env.NOITON_OAUTH_CLIENT_ID || "",
+        redirect_uri: process.env.NOTION_REDIRECT_URI || "",
+        response_type: "code",
+        state,
+        owner: "user",
+      });
+  
+      const authUrl = `https://api.notion.com/v1/oauth/authorize?${params.toString()}`;
+      res.json({ authUrl });
+    } catch (e) {
+      res.status(500).json({ error: "Failed to generate auth URL" });
+    }
+  });
+
+  router.get("/notion/callback", async (req, res) => {
+    try {
+      const { code, state } = req.query;
+  
+      if (!code) {
+        throw new Error("No authorization code received");
+      }
+  
+      // Decode the state parameter
+      const decodedState = JSON.parse(decodeURIComponent(state as string));
+      const redirectTo = decodedState.redirectTo || process.env.FRONTEND_ORIGIN;
+  
+      // Exchange code for access token
+      const tokenResponse = await axios.post('https://api.notion.com/v1/oauth/token', {
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: process.env.NOTION_REDIRECT_URI
+      }, {
+        headers: {
+          'Authorization': `Basic ${Buffer.from(`${process.env.NOITON_OAUTH_CLIENT_ID}:${process.env.NOTION_OAUTH_CLIENT_SECRET}`).toString('base64')}`,
+          'Content-Type': 'application/json'
         }
-
-        console.log("Authheader receved", token);
-
-        const notionResponse = await axios.get(NOITON_AUTHORIZATION_URL, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        // Handle the response from Notion
-        res.status(200).json({
-            message: "Successfully authenticated with Notion",
-            data: notionResponse.data,
-        });
-    } catch (error) {
-        console.error("Error authenticating with Notion:", error);
-        res.status(500).json({ error: "Failed to authenticate with Notion" });
-    }
-})
-
-
-router.get("/notion/callback", async (req, res) => {
-    const { code } = req.query;
-
-    if (!code) {
-        return res.status(400).json({
-            message: "Authorization Code is missing"
-        });
-    }
-    
-    try {
-        const credentials = Buffer.from(
-            `${process.env.NOTION_OAUTH_CLIENT_ID}:${process.env.NOTION_OAUTH_CLIENT_SECRET}`
-        ).toString('base64');
-
-        const response = await axios.post(
-            "https://api.notion.com/v1/oauth/token",
-            {
-                grant_type: "authorization_code",
-                code,
-                redirect_uri: process.env.NOTION_REDIRECT_URI
-            },
-            {
-                headers: {
-                    'Authorization': `Basic ${credentials}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        const { access_token, workspace_id, workspace_name } = response.data;
-
-        // Send HTML response with postMessage
-        const html = `
-            <html>
-                <body>
-                    <script>
-                        window.opener.postMessage(
-                            { 
-                                type: 'notion_auth_callback',
-                                access_token: '${access_token}',
-                                workspace_id: '${workspace_id}',
-                                workspace_name: '${workspace_name}'
-                            }, 
-                            '*'
-                        );
-                        window.close();
-                    </script>
-                </body>
-            </html>
-        `;
-        
-        return res.send(html);
-
+      });
+  
+      // Add access token and workspace data to the redirect URL
+      const queryParams = new URLSearchParams({
+        workspace_name: tokenResponse.data.workspace_name,
+        access_token: tokenResponse.data.access_token,
+        workspace_id: tokenResponse.data.workspace_id,
+      });
+  
+      // Redirect the user to the frontend with the additional query parameters
+      res.redirect(`${redirectTo}?${queryParams.toString()}`);
     } catch (error: any) {
-        const errorHtml = `
-            <html>
-                <body>
-                    <script>
-                        window.opener.postMessage(
-                            { 
-                                type: 'notion_auth_error',
-                                error: '${encodeURIComponent(error.message || 'Failed to connect to Notion')}'
-                            }, 
-                            '*'
-                        );
-                        window.close();
-                    </script>
-                </body>
-            </html>
-        `;
-        return res.send(errorHtml);
+      console.error("Error in Notion callback:", error.message);
+  
+      // Redirect with an error message if something goes wrong
+      const errorParams = new URLSearchParams({
+        error: "notion_auth_failed",
+        message: "Failed to complete Notion authentication",
+      });
+  
+      const { state } = req.query;
+      const decodedState = state ? JSON.parse(decodeURIComponent(state as string)) : {};
+      const redirectTo = decodedState.redirectTo || process.env.FRONTEND_ORIGIN;
+  
+      res.redirect(`${redirectTo}?${errorParams.toString()}`);
     }
-});
-
+  });
+  
+  
 router.get("/notion/databases", authMiddleware, async (req, res) => {
     try {
       const token = req.headers.authorization?.split(" ")[1];
