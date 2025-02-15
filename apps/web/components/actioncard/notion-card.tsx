@@ -50,7 +50,7 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
   
       setIsLoading(true);
   
-      const currentUrl = window.location.href; // Capture the current URL
+      const currentUrl = window.location.href; 
   
       const res = await axios.get(`${BACKEND_URL}/api/v1/notionAuth/notion/auth`, {
         headers: { 
