@@ -19,30 +19,40 @@ const NotionCard = ({ setMetadata, onClose }: { setMetadata: (params: any) => vo
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Check if already connected
+    // Check if already connected - move this check outside of other conditions
     const notionWorkspace = localStorage.getItem('notion_workspace_name');
-    if (notionWorkspace) {
+    const notionAccessToken = localStorage.getItem('notion_access_token');
+    
+    if (notionWorkspace && notionAccessToken) {
       setIsConnected(true);
       setWorkspaceName(notionWorkspace);
+      // Also set the metadata when restoring from localStorage
+      setMetadata({
+        workspaceName: notionWorkspace,
+        accessToken: notionAccessToken
+      });
     }
 
+    // Handle URL parameters for new connections
     const params = new URLSearchParams(window.location.search);
     const workspaceName = params.get('workspace_name');
     const accessToken = params.get('access_token');
+    const error = params.get('error');
 
-    if(workspaceName && accessToken) {
+    if (workspaceName && accessToken) {
       setIsConnected(true);
       setWorkspaceName(workspaceName);
       localStorage.setItem('notion_workspace_name', workspaceName);
       localStorage.setItem('notion_access_token', accessToken);
-      setMetadata({workspaceName, accessToken})
+      setMetadata({workspaceName, accessToken});
+    }
+    
+    if (error) {
+      const message = params.get('message') || 'Unknown error';
+      alert(`Failed to connect to Notion: ${message}`);
+    }
+  }, [setMetadata]); // Add setMetadata to dependencies
 
-    }
-    const error = params.get('error');
-    if(!error) {
-      alert(`Failed tp connect to ntoion: ${params.get('message')}`);
-    }
-  }, []);
   const handleNotionAuth = async () => {
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
