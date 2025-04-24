@@ -32,7 +32,7 @@ export function LandingFetures():JSX.Element {
               transition={{ duration: 0.8, delay: 0.4 }}
               className='mt-8 text-lg sm:text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed'
             >
-                Whether you are a team of one or a thousand, Zapier puts the power of automation in your hands—no coding required. Take your workflows to the next level with our suite of automation tools.
+                Whether you are a team of one or a thousand, ChainX puts the power of automation in your hands—no coding required. Take your workflows to the next level with our suite of automation tools.
             </motion.p>
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
