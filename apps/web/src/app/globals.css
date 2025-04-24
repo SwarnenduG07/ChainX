@@ -100,6 +100,20 @@
   }
 }
 
+/* Noise texture overlay - adds subtle texture to backgrounds */
+.noise-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.035;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Enhanced animations */
 @keyframes float {
   0% { transform: translateY(0px) scale(1); }
   50% { transform: translateY(-20px) scale(1.05); }
@@ -112,6 +126,21 @@
   100% { transform: translateY(-20px) scale(1.05); }
 }
 
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; filter: blur(15px); }
+  50% { opacity: 0.7; filter: blur(20px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .animate-float {
   animation: float 8s ease-in-out infinite;
 }
@@ -122,5 +151,137 @@
 
 .animate-pulse-slow {
   animation: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(255, 255, 255, 0.05) 20%, 
+    rgba(255, 255, 255, 0.1) 60%, 
+    rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+/* Grid pattern background - Reflect.app style */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated stars background */
+@keyframes twinkle-small {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes twinkle-medium {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes twinkle-large {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.stars-small,
+.stars-medium,
+.stars-large {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.stars-small::after,
+.stars-medium::after,
+.stars-large::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(white, rgba(255, 255, 255, 0) 2px);
+  background-size: 100px 100px;
+}
+
+.stars-small::after {
+  background-size: 300px 300px;
+  animation: twinkle-small 3s infinite alternate;
+}
+
+.stars-medium::after {
+  background-size: 400px 400px;
+  background-position: 50px 50px;
+  animation: twinkle-medium 5s infinite alternate;
+}
+
+.stars-large::after {
+  background-size: 600px 600px;
+  background-position: 150px 150px;
+  animation: twinkle-large 7s infinite alternate;
+}
+
+/* Enhanced scroll animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Reflect.app inspired particle background */
+@keyframes particle-drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(10px, 10px); }
+  100% { transform: translate(0, 0); }
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: particle-drift 8s infinite ease-in-out;
 }
 
