@@ -23,14 +23,14 @@ export function HeroVideo() {
         <HeroVideoDialog
           className="dark:hidden block relative z-10"
           animationStyle="top-in-bottom-out"
-          videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
+          videoSrc=""
           thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
           thumbnailAlt="ChainX Automation Platform Demo"
         />
         <HeroVideoDialog
           className="hidden dark:block relative z-10"
           animationStyle="top-in-bottom-out"
-          videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
+          videoSrc=""
           thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
           thumbnailAlt="ChainX Automation Platform Demo"
         />
